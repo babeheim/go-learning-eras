@@ -1,7 +1,44 @@
 
+
+interpolate_colors <- function(colors, weights) {
+  if (length(colors) != length(weights)) {
+    stop("colors and weights must have the same length")
+  }
+  
+  if (length(colors) == 1) {
+    return(colors)
+  }
+  
+  # Normalize weights
+  weights <- weights / sum(weights)
+  
+  # Convert colors to RGB and normalize
+  rgb_matrix <- col2rgb(colors) / 255  # This gives a 3 x N matrix
+  
+  # Weighted sum across columns
+  weighted_rgb <- rgb_matrix %*% weights  # Matrix multiplication (3xN) %*% (N)
+  
+  # Clamp values to [0, 1] to avoid rounding errors
+  weighted_rgb <- pmin(pmax(weighted_rgb, 0), 1)
+  
+  # Convert back to hex color
+  rgb(weighted_rgb[1], weighted_rgb[2], weighted_rgb[3])
+}
+
+
+move_to_start <- function(vec, i) {
+  if (i < 1 || i > length(vec)) stop("Index out of bounds")
+  c(vec[i], vec[-i])
+}
+
+move_to_end <- function(vec, i) {
+  if (i < 1 || i > length(vec)) stop("Index out of bounds")
+  c(vec[-i], vec[i])
+}
+
 # https://stackoverflow.com/questions/25631216/r-plots-is-there-a-way-to-draw-a-border-shadow-or-buffer-around-text-labels
 
-shadowtext <- function(x, y=NULL, labels, col='white', bg='black', 
+shadowtext <- function(x, y=NULL, labels, col='black', bg='white', 
                        theta= seq(0, 2*pi, length.out=50), r=0.1, ... ) {
 
     xy <- xy.coords(x,y)

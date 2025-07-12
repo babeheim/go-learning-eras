@@ -198,7 +198,7 @@ png("figures/move12_evolution_pace.png", res = 300, units = "in", height = 4.5, 
 
 par(mar = c(4, 4, 0, 0))
 
-plot(periods$name, sigma_mu, type = "n", ylim = c(0, 2.1), ylab = "speed of trait evolution (period sigma)", xlab = "year")
+plot(periods$name, sigma_mu, type = "n", ylim = c(0, 2.1), ylab = "speed of trait evolution (s.d.'s)", xlab = "year")
 polygon(c(periods$name, rev(periods$name)), c(sigma_lb, rev(sigma_ub)), col = col_alpha("dodgerblue", 0.3), border = NA)
 points(periods$name, sigma_mu, type = "l")
 

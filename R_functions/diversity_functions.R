@@ -16,20 +16,46 @@ calc_js_divergence <- function(x, y) {
   return(out)
 }
 
-
-extract_game_moves <- function(games, n_moves, cumulative = FALSE, unicode = FALSE) {
-  moves <- matrix(NA, nrow = nrow(games), ncol = n_moves)
+extract_game_nodes <- function(sgf_moves, n_moves) {
+  moves <- matrix(NA, nrow = length(sgf_moves), ncol = n_moves)
   sgf_coords <- paste0(rep(letters[1:19], each = 19), rep(letters[1:19], by = 19))
   unicode_symbols <- intToUtf8(0x1F300 + 0:360, multiple = TRUE)  # Starting from U+1F300 (Miscellaneous Symbols)
-  for (i in seq_len(nrow(games))) {
-    game_moves <- strsplit(games$opening[i], ";")[[1]][1:n_moves]
-    if (unicode) game_moves <- unicode_symbols[match(game_moves, sgf_coords)]
-    moves[i, ] <- game_moves
-  }
-  if (cumulative) {
-    for (i in 2:ncol(moves)) {
-      moves[,i] <- paste0(moves[,i-1], moves[,i])
+  for (i in seq_along(sgf_moves)) {
+    game_moves <- strsplit(sgf_moves[i], ";")[[1]][1:n_moves]
+    blacks <- seq(1, n_moves, 2)
+    game_moves[blacks] <- paste0("B", game_moves[blacks])
+    game_moves[-blacks] <- paste0("W", game_moves[-blacks])
+    out_row <- rep(NA, n_moves)
+    out_row[1] <- game_moves[1]
+    for (j in 2:n_moves) {
+      this_cell <- game_moves[1:j]
+      this_cell <- sort(this_cell)
+      out_row[j] <- paste(this_cell, collapse = "")
     }
+    moves[i,] <- out_row
+  }
+  return(moves)
+}
+
+extract_game_moves <- function(sgf_moves, n_moves, cumulative = FALSE, unicode = FALSE, as_nodes = FALSE) {
+  moves <- matrix(NA, nrow = length(sgf_moves), ncol = n_moves)
+  sgf_coords <- paste0(rep(letters[1:19], each = 19), rep(letters[1:19], by = 19))
+  unicode_symbols <- intToUtf8(0x1F300 + 0:360, multiple = TRUE)  # Starting from U+1F300 (Miscellaneous Symbols)
+  for (i in seq_along(sgf_moves)) {
+    game_moves <- strsplit(sgf_moves[i], ";")[[1]][1:n_moves]
+    if (unicode) game_moves <- unicode_symbols[match(game_moves, sgf_coords)]
+    if (cumulative) {
+      out_row <- rep(NA, n_moves)
+      out_row[1] <- game_moves[1]
+      for (j in 2:n_moves) {
+        this_cell <- game_moves[1:j]
+        if (as_nodes) this_cell <- sort(this_cell)
+        out_row[j] <- paste(this_cell, collapse = "")
+      }
+    } else {
+      out_row <- game_moves
+    }
+    moves[i,] <- out_row
   }
   return(moves)
 }

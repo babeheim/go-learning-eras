@@ -9,11 +9,9 @@ move12s <- read.csv("data/move12s.csv")
 
 n_moves <- 26
 
-game_moves <- extract_game_moves(games, n_moves = n_moves, cumulative = TRUE)
+game_moves <- extract_game_moves(games$opening, n_moves = n_moves, cumulative = TRUE)
 
 stopifnot(nrow(games) == 118348)
-
-
 
 cat("calc opening diversity stats\n")
 
@@ -59,9 +57,6 @@ moves <- data.frame(
   count = as.numeric(rev(sort(table(games$move12))))
 )
 
-moves$col <- move12s$col[match(gsub(";", "", moves$name), move12s$pattern)]
-moves$col[is.na(moves$col)] <- gray(0.5, 0.7)
-
 # determine order to stack the plot polygons
 
 moves$count_old <- NA
@@ -75,10 +70,13 @@ for (i in 1:nrow(moves)) {
 
 moves <- arrange(moves, desc(count_old))
 
-move_to_end <- function(vec, i) {
-  if (i < 1 || i > length(vec)) stop("Index out of bounds")
-  c(vec[-i], vec[i])
-}
+tar <- which(moves$name == "qd;dd;") # R16,D16
+o <- move_to_start(1:nrow(moves), tar)
+moves <- moves[o,]
+
+tar <- which(moves$name == "qd;dc;") # R16,D17
+o <- move_to_start(1:nrow(moves), tar)
+moves <- moves[o,]
 
 tar <- which(moves$name == "pd;cq;")
 o <- move_to_end(1:nrow(moves), tar)
@@ -126,10 +124,11 @@ period_moves$move <- as.character(period_moves$move)
 period_moves$period <- as.numeric(as.character(period_moves$period))
 period_moves$n_games_period <- periods$n_games[match(period_moves$period, periods$name)]
 period_moves$prop_games <- period_moves$n_games / period_moves$n_games_period
-period_moves$col <- moves$col[match(period_moves$move, moves$name)]
 period_moves$ybp <- 2024 + 1 - period_moves$period
 
-period_moves$col <- move12s$col[match(gsub(";", "", period_moves$move), move12s$pattern)]
+period_moves$col <- move12s$col[match(period_moves$move, move12s$pattern)]
+
+period_moves$col[is.na(period_moves$col)] <- gray(0.5, 0.7)
 
 
 
@@ -140,8 +139,6 @@ bootstrap_sample_size <- 100
 
 calcs$openingDiversitySampleSize <- bootstrap_sample_size
 calcs$openingDiversityBootstrapIterations <- n_bootstrap_iters
-
-# except for 1946 1947 1948 1825, every period has at least 100 games, which we can use
 
 # for each bootstrap iteration, we calculate the diversity of each period
 
@@ -173,7 +170,9 @@ for (iter in 1:n_bootstrap_iters) {
   for (i in 2:nrow(periods_sub)) {
     tar_now <- which(games_sub$period == periods_sub$name[i])
     tar_past <- which(games_sub$period == periods_sub$name[i-1])
-    periods_sub$move12_divergence[i] <- calc_js_divergence(games_sub$move12[tar_past], games_sub$move12[tar_now])
+    if (length(tar_now) > 0 & length(tar_past) > 0) {
+      periods_sub$move12_divergence[i] <- calc_js_divergence(games_sub$move12[tar_past], games_sub$move12[tar_now])
+    }
   }
 
   periods_sub$iter <- iter
@@ -200,6 +199,7 @@ periods$n_players_effective <- periods_boot$n_players_effective[match(periods$na
 
 periods$move12_diversity <- periods_boot$move12_diversity[match(periods$name, periods_boot$name)]
 periods$move12_divergence <- periods_boot$move12_divergence[match(periods$name, periods_boot$name)]
+
 
 
 
@@ -277,9 +277,9 @@ for (i in 1:nrow(period_moves)) {
 
 abline(v = events$year, col = gray(0.3, 0.8), lty = 2)
 
-text(1802, 0.25, labels = "qd,dc")
-text(1682, 0.33, labels = "qd,oc")
-text(1693, 0.88, labels = "pd,dp")
+shadowtext(1802, 0.25, labels = "R16,D17") # " #8cc665"
+shadowtext(1682, 0.33, labels = "R16,P17") # " #e9aabd"
+shadowtext(1693, 0.88, labels = "Q16,D16")  # 
 
 # second panel: move diversity from 1600 to 1945
 
@@ -315,7 +315,7 @@ points(periods$name, periods$move12_divergence, type = "o", pch = 20, col = "blu
 
 axis(2, at = seq(0, divergence_max, 0.05), las = 1)
 
-axis(1, at = c(1550, seq(1650, 1945, by = 50), 2000))
+axis(1, at = c(1500, seq(1650, 1900, by = 50), 1930))
 abline(v = events$year, col = gray(0.3, 0.8), lty = 2)
 
 # fourth panel: move frequencies from 1945 to 2024
@@ -339,10 +339,10 @@ for (i in 1:nrow(period_moves)) {
 
 abline(v = events$year, col = gray(0.3, 0.8), lty = 2)
 
-text(1994, 0.07, labels = "qd,dd")
-text(1982, 0.7, labels = "pd,dc")
-text(1985, 0.9, labels = "pd,dp")
-text(1996, 0.41, labels = "pd,dd")
+shadowtext(1994, 0.07, labels = "R16,D16") # " #46cbe5"
+shadowtext(1982, 0.7, labels = "Q16,D17")  # " #44a340"
+shadowtext(1985, 0.9, labels = "Q16,D16")  # " #9e0c0f"
+shadowtext(1996, 0.41, labels = "Q16,D16") # " #9BC4DF"
 
 
 # fifth panel: shannon diversity from 1945 to 2024
@@ -372,10 +372,98 @@ abline(h = seq(0, divergence_max, .10), col = col_alpha("blue", 0.2))
 
 points(periods$name, periods$move12_divergence, type = "o", pch = 20, col = "blue")
 
-axis(1, at = c(1900, seq(1945, 2024, by = 10), 2030))
+axis(1, at = c(seq(1950, 2024, by = 10), 2030))
 abline(v = events$year, col = gray(0.3, 0.8), lty = 2)
 
 dev.off()
+
+
+
+
+cat("plot move12_diversity_divergence_year_single\n")
+
+frq_max <- 1.02
+diversity_min <- 2.5
+diversity_max <- 20
+divergence_max <- 0.4
+left_year <- 1620
+middle_year <- 1945
+right_year <- 2025
+
+png("figures/move12_diversity_divergence_year_single.png", res = 300, units = "in", height = 8, width = 8)
+
+fill_alpha <- 0.8
+
+# Set up the layout: matrix defines plot order; heights define relative row sizes
+layout_matrix <- matrix(c(1, 2, 3), nrow = 3, ncol = 1, byrow = FALSE)
+layout(mat = layout_matrix, heights = c(2, 1, 1))
+
+# first panel: move frequencies from 1600 to 1945
+
+par(mar = c(0, 4, 0, 0))
+
+plot(NULL, type = "l", xlim = c(left_year, right_year),
+  ylim = c(0, frq_max), xaxs="i", yaxs="i", xaxt = "n",
+  frame.plot = FALSE, ylab = "move12 frequency", las = 1)
+
+periods$base <- 0
+
+for (i in 1:nrow(period_moves)) {
+  tar <- which(period_moves$move == moves$name[i])
+  if (length(tar) > 0) {
+    ceiling <- periods$base + period_moves$prop_games[tar]
+    polygon(c(period_moves$period[tar], rev(period_moves$period[tar])), c(periods$base, rev
+    (ceiling)), col = col_alpha(period_moves$col[tar[1]], fill_alpha), border = gray(0.7, 0.5))
+    periods$base <- ceiling
+  }
+}
+
+abline(v = events$year, col = gray(0.3, 0.8), lty = 2)
+
+shadowtext(1802, 0.25, labels = "R16,D17")
+shadowtext(1682, 0.33, labels = "R16,P17")
+shadowtext(1693, 0.88, labels = "Q16,D16")
+
+# second panel: move diversity from 1600 to 2024
+
+par(mar = c(0, 4, 0, 0))
+
+plot(NULL, ylab = "move12 diversity", xlab = "", xlim = c(left_year, right_year),
+  xaxt = "n", xaxs="i", yaxs="i", ylim = c(diversity_min, diversity_max),
+  frame.plot = FALSE, las = 1, yaxt = "n")
+
+abline(h = c(0, 4, 8, 12, 16, 20), col = gray(0.5, 0.2))
+
+points(periods$name, periods$move12_diversity, type = "o", pch = 20)
+
+axis(2, at = seq(0, 20, by = 2), labels = FALSE, las = 1)
+axis(2, at = c(0, 4, 8, 12, 16), tick = FALSE, las = 1)
+
+abline(h = 2.5)
+
+abline(v = events$year, col = gray(0.3, 0.8), lty = 2)
+shadowtext(events$year - 5, events$my_y, events$name, srt = 90, col = "black", bg = "white")
+
+# third panel: move divergence from 1600 to 1945
+
+par(mar = c(5, 4, 0, 0))
+
+plot(NULL, ylab = "move12 divergence", xlab = "", xlim = c(left_year, right_year),
+  xaxt = "n", xaxs="i", yaxs="i", ylim = c(0, divergence_max),
+  frame.plot = FALSE, las = 1, yaxt = "n")
+
+abline(h = seq(0, divergence_max, .10), col = col_alpha("blue", 0.2))
+
+points(periods$name, periods$move12_divergence, type = "o", pch = 20, col = "blue")
+
+axis(2, at = seq(0, divergence_max, 0.05), las = 1)
+
+axis(1, at = c(1500, seq(1650, 2024, by = 50), 2100))
+abline(v = events$year, col = gray(0.3, 0.8), lty = 2)
+
+dev.off()
+
+
 
 
 
@@ -420,15 +508,16 @@ period_div <- out
 
 period_div$ybp <- (2024 + 1) - period_div$era
 
+entropy_cols <- viridis(5, begin = 0, end = 0.7)
+divergence_cols <- magma(6, end = 0.7)
 
-
-png("figures/diversity_by_period_log.png", res = 300, units = "in", height = 4, width = 8)
+png("figures/diversity_by_period_log.png", res = 300, units = "in", height = 4.5, width = 8)
 
 par(mfrow = c(1, 2))
 
 tar <- which(period_div$move == 1)
 plot(period_div$ybp[tar], period_div$entropy[tar],
-  xlab = "year", xlim = c(421, 1), col = "black",
+  xlab = "year", ylab = "Shannon entropy", xlim = c(421, 1), col = entropy_cols[1],
   ylim = c(0, log(n_sampled_games)), type = "l", pch = 20,
   log = "x", xaxt = "n")
 
@@ -436,61 +525,45 @@ axis(1, at = c((2024 + 1) - eras$start_year), labels = eras$start_year)
 
 tar <- which(period_div$move == 2)
 points(period_div$ybp[tar], period_div$entropy[tar],
-  col = "black", ylim = c(0, log(n_sampled_games)), type = "l", pch = 20)
+  col = entropy_cols[2], ylim = c(0, log(n_sampled_games)), type = "l", pch = 20)
 
 tar <- which(period_div$move == 3)
 points(period_div$ybp[tar], period_div$entropy[tar],
-  col = "black", ylim = c(0, log(n_sampled_games)), type = "l", pch = 20)
+  col = entropy_cols[3], ylim = c(0, log(n_sampled_games)), type = "l", pch = 20)
 
 tar <- which(period_div$move == 4)
 points(period_div$ybp[tar], period_div$entropy[tar],
-  col = "black", ylim = c(0, log(n_sampled_games)), type = "l", pch = 20)
+  col = entropy_cols[4], ylim = c(0, log(n_sampled_games)), type = "l", pch = 20)
 
 tar <- which(period_div$move == 5)
 points(period_div$ybp[tar], period_div$entropy[tar],
-  col = "black", ylim = c(0, log(n_sampled_games)), type = "l", pch = 20)
+  col = entropy_cols[5], ylim = c(0, log(n_sampled_games)), type = "l", pch = 20)
 
 abline(h = log(n_sampled_games), lty = 2)
-
-abline(v = (2024 + 1) - eras$start_year, col = "red", lty = 2)
 
 
 tar <- which(period_div$move == 1)
 plot(period_div$ybp[tar], period_div$divergence[tar],
-  xlab = "year", xlim = c(421, 1), col = "black", type = "l", pch = 20,
+  xlab = "year", ylab = "JSD", xlim = c(421, 1), col = divergence_cols[1], type = "l", pch = 20,
   log = "x", xaxt = "n", ylim = c(0, 1))
   
 axis(1, at = c((2024 + 1) - eras$start_year), labels = eras$start_year)
 
 tar <- which(period_div$move == 2)
 points(period_div$ybp[tar], period_div$divergence[tar],
-  col = "red", type = "l", pch = 20)
+  col = divergence_cols[2], type = "l", pch = 20)
 
 tar <- which(period_div$move == 3)
 points(period_div$ybp[tar], period_div$divergence[tar],
-  col = "blue", type = "l", pch = 20)
+  col = divergence_cols[3], type = "l", pch = 20)
 
 tar <- which(period_div$move == 4)
 points(period_div$ybp[tar], period_div$divergence[tar],
-  col = "orange", type = "l", pch = 20)
+  col = divergence_cols[4], type = "l", pch = 20)
 
 tar <- which(period_div$move == 5)
 points(period_div$ybp[tar], period_div$divergence[tar],
-  col = "lightblue", type = "l", pch = 20)
-
-tar <- which(period_div$move == 6)
-points(period_div$ybp[tar], period_div$divergence[tar],
-  col = "darkred", type = "l", pch = 20)
-
-tar <- which(period_div$move == 7)
-points(period_div$ybp[tar], period_div$divergence[tar],
-  col = "red1", type = "l", pch = 20)
-
-tar <- which(period_div$move == 10)
-points(period_div$ybp[tar], period_div$divergence[tar],
-  col = "black", type = "l", pch = 20)
-
-abline(v = (2024 + 1) - eras$start_year, col = "red", lty = 2)
+  col = divergence_cols[5], type = "l", pch = 20)
 
 dev.off()
 
@@ -506,7 +579,7 @@ n_sampled_games <- 2000
 
 calcs$nSampledGamesEraOpeningDiversity <- format(n_sampled_games, big.mark = ",", trim = TRUE)
 
-game_moves <- extract_game_moves(games, n_moves = n_moves, cumulative = TRUE)
+game_moves <- extract_game_moves(games$opening, n_moves = n_moves, cumulative = TRUE)
 # n_games x n_moves
 
 for (i in 1:nrow(eras)) {
@@ -537,8 +610,6 @@ era_diversity <- out
 
 my_cols <- viridis(6)
 my_cols[length(my_cols)] <- "red"
-
-# this isn't working anyhmore, why??
 
 periods$era <- NA
 for (i in 1:nrow(periods)) {

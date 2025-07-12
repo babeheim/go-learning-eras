@@ -63,10 +63,6 @@ for (i in 1:nrow(years)) {
   tarw <- which(games$year == years$year[i] & games$language_white == "KR") 
   years$n_players_kr[i] <- length(unique(c(games$player_id_black[tarb], games$player_id_black[tarw])))
 
-  tarb <- which(games$year == years$year[i] & games$language_black == "EN") 
-  tarw <- which(games$year == years$year[i] & games$language_white == "EN") 
-  years$n_players_en[i] <- length(unique(c(games$player_id_black[tarb], games$player_id_black[tarw])))
-
 }
 
 
@@ -141,17 +137,17 @@ plot(years$year, years$n_players, frame.plot = FALSE,
   las = 1, type = "n", xlim = c(1600, 1945), ylim = c(0.9, 800),
   ylab = "Number of players", xlab = "Year"
 )
-points(years$year, years$n_players_jp, type = "l", col = nations$color[which(nations$name == "JP")])
-points(years$year, years$n_players_cn, type = "l", col = nations$color[which(nations$name == "CN")])
-points(years$year, years$n_players_tw, type = "l", col = nations$color[which(nations$name == "TW")])
-points(years$year, years$n_players_kr, type = "l", col = nations$color[which(nations$name == "KR")])
-points(years$year, years$n_players_en, type = "l", col = nations$color[which(nations$name == "EN")])
+points(years$year, years$n_players_jp, type = "l", col = nations$color[which(nations$name == "JP")], pch = 20)
+points(years$year, years$n_players_cn, type = "l", col = nations$color[which(nations$name == "CN")], pch = 20)
+points(years$year, years$n_players_cn, type = "p", col = nations$color[which(nations$name == "CN")], pch = 20)
+points(years$year, years$n_players_tw, type = "l", col = nations$color[which(nations$name == "TW")], pch = 20)
+points(years$year, years$n_players_kr, type = "l", col = nations$color[which(nations$name == "KR")], pch = 20)
 
 abline(v = 1945, col = gray(0.3, 0.8))
 
 abline(h = 0.9, col = "black")
 
-axis(1, at = c(1550, seq(1650, 1945, by = 50), 2000))
+axis(1, at = c(1500, seq(1650, 1900, by = 50)))
 
 par(mar = c(5, 0, 0, 2))
 
@@ -160,28 +156,19 @@ plot(years$year, years$n_players, frame.plot = FALSE,
   las = 1, type = "n", xlim = c(1945, 2025), ylim = c(0.9, 800),
   xlab = "", ylab = ""
 )
-points(years$year, years$n_players_jp, type = "l", col = nations$color[which(nations$name == "JP")])
-points(years$year, years$n_players_cn, type = "l", col = nations$color[which(nations$name == "CN")])
-points(years$year, years$n_players_tw, type = "l", col = nations$color[which(nations$name == "TW")])
-points(years$year, years$n_players_kr, type = "l", col = nations$color[which(nations$name == "KR")])
-points(years$year, years$n_players_en, type = "l", col = nations$color[which(nations$name == "EN")])
+points(years$year, years$n_players_jp, type = "l", col = nations$color[which(nations$name == "JP")], pch = 20)
+points(years$year, years$n_players_cn, type = "l", col = nations$color[which(nations$name == "CN")], pch = 20)
+points(years$year, years$n_players_tw, type = "l", col = nations$color[which(nations$name == "TW")], pch = 20)
+points(years$year, years$n_players_kr, type = "l", col = nations$color[which(nations$name == "KR")], pch = 20)
 
-text(1960, 150, labels = "🇯🇵", cex = 2)
-text(1955, 20, labels = "🇨🇳", cex = 2)
-text(1997, 70, labels = "🇰🇷", cex = 2)
-text(1988, 20, labels = "🇹🇼", cex = 2)
-text(2010, 10, labels = "🇬🇧", cex = 2)
+text(1960, 150, labels = "Japan", cex = 1)
+text(1955, 20, labels = "China", cex = 1)
+text(1997, 70, labels = "S.Korea", cex = 1)
+text(1988, 20, labels = "Taiwan", cex = 1)
 
-axis(1, at = c(1900, seq(1945, 2024, by = 10), 2030))
+axis(1, at = c(seq(1950, 2024, by = 10), 2030))
 abline(v = 1945, col = gray(0.3, 0.8))
 
 abline(h = 0.9, col = "black")
 
 dev.off()
-
-
-# 🇨🇳 # PRC
-# 🇹🇼 # flag of taiwan
-# 🇰🇷 # south korea
-# 🇯🇵 # flag of japan
-# 🇬🇧 # flag of england

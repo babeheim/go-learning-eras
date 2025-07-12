@@ -9,25 +9,27 @@ players <- read.csv("data/players.csv")
 nations <- list(
   list(
     name = "CN", 
-    color = "#d32828"
+    color = " #f47070"
   ),
   list(
     name = "JP", 
-    color = "#000000"
+    color = " #474747"
   ),
   list(
     name = "TW", 
-    color = "#456dee"
+    color = "#597ae8"
   ),
   list(
     name = "KR", 
-    color = "#3bac45"
+    color = "#579d5d"
   ),
   list(
     name = "EN", 
-    color = "#e6a442"
+    color = " #e7b160"
   )
 ) |> bind_rows() |> as.data.frame()
+
+nations$color <- trimws(nations$color)
 
 players$lang_color <- nations$color[match(players$language, nations$name)]
 mean(is.na(players$language)) # 60% still missing! huh?
@@ -88,11 +90,24 @@ for (i in 1:nrow(periods)) {
 
 }
 
+
+
+
+
+
 # Fast greedy (good for large, undirected graphs)
 # A Clauset, MEJ Newman, C Moore: Finding community structure in very large networks, http://www.arxiv.org/abs/cond-mat/0408187
 
+png("figures/network_examples.png", res = 300, units = "in", height = 7, width = 7)
+
+par(mfrow = c(2, 2))
+
+focal_period <- 1625
+node_size <- 5
+edge_width <- 1
+
 edgelists <- list.files("data", pattern = "edgelist", full.names = TRUE)
-i <- which(periods$name == 1951)
+i <- which(periods$name == focal_period)
 edges <- read.csv(edgelists[i])
 
 g <- graph_from_edgelist(as.matrix(select(edges, from, to)), directed = FALSE)
@@ -118,21 +133,185 @@ max(components(g)$csize)
 
 edge.attributes(g)$weight <- edges$n_games
 layout_fr <- layout_with_fr(g, weights = 1 / edge.attributes(g)$weight)  # inverse weight = shorter distance
+V(g)$color <- players$lang_color[match(V(g)$name, players$player_id)]
+
+par(mar = c(0.1, 0.1, 0.1, 0.1))
+
 plot(
   g,
   layout = layout_fr, 
-  edge.width = edge.attributes(g)$weight / max(edge.attributes(g)$weight) * 5 + 1,
+  edge.width = edge_width,
   vertex.color = V(g)$color,
   vertex.label.color = "black",
-  vertex.size = 1,
+  vertex.size = node_size,
   vertex.label = NA,
-  node.label = NA,
-  main = paste0("match network, ", periods$name[i])
+  node.label = NA, frame.plot = TRUE
 )
+
+text(1, 1, labels = "1600-1649", pos = 2)
+
+
+
+focal_period <- 1935
+node_size <- 5
+edge_width <- 1
+
+edgelists <- list.files("data", pattern = "edgelist", full.names = TRUE)
+i <- which(periods$name == focal_period)
+edges <- read.csv(edgelists[i])
+
+g <- graph_from_edgelist(as.matrix(select(edges, from, to)), directed = FALSE)
+g_main <- induced_subgraph(g, components(g)$membership == which.max(components(g)$csize))
+transitivity(g_main, type = "average")
+mean_distance(g_main, directed = FALSE)
+
+n_nodes <- vcount(g_main) # num. verticies (nodes), aka `n` in igraph
+n_ties <- gsize(g_main)  # num. edges (ties), aka `m` in igraph
+
+g_rand <- sample_gnm(n_nodes, n_ties)
+transitivity(g_rand, type = "average")
+mean_distance(g_rand, directed = FALSE)
+
+k <- floor((2 * n_ties) / n_nodes)  # average degree
+nei <- round(k / 2) # better than floor...
+
+g_lattice <- sample_smallworld(dim = 1, size = n_nodes, nei = nei, p = 0)
+transitivity(g_lattice, type = "average")
+mean_distance(g_lattice)
+
+max(components(g)$csize)
+
+edge.attributes(g)$weight <- edges$n_games
+layout_fr <- layout_with_fr(g, weights = 1 / edge.attributes(g)$weight)  # inverse weight = shorter distance
+V(g)$color <- players$lang_color[match(V(g)$name, players$player_id)]
+
+
+par(mar = c(0.1, 0.1, 0.1, 0.1))
+
+plot(
+  g,
+  layout = layout_fr, 
+  edge.width = edge_width,
+  vertex.color = V(g)$color,
+  vertex.label.color = "black",
+  vertex.size = node_size,
+  vertex.label = NA,
+  node.label = NA, frame.plot = TRUE
+)
+
+text(1, 1, labels = "1930-1939", pos = 2)
+
+
+focal_period <- 1975
+node_size <- 5
+edge_width <- 1
+
+edgelists <- list.files("data", pattern = "edgelist", full.names = TRUE)
+i <- which(periods$name == focal_period)
+edges <- read.csv(edgelists[i])
+
+g <- graph_from_edgelist(as.matrix(select(edges, from, to)), directed = FALSE)
+g_main <- induced_subgraph(g, components(g)$membership == which.max(components(g)$csize))
+transitivity(g_main, type = "average")
+mean_distance(g_main, directed = FALSE)
+
+n_nodes <- vcount(g_main) # num. verticies (nodes), aka `n` in igraph
+n_ties <- gsize(g_main)  # num. edges (ties), aka `m` in igraph
+
+g_rand <- sample_gnm(n_nodes, n_ties)
+transitivity(g_rand, type = "average")
+mean_distance(g_rand, directed = FALSE)
+
+k <- floor((2 * n_ties) / n_nodes)  # average degree
+nei <- round(k / 2) # better than floor...
+
+g_lattice <- sample_smallworld(dim = 1, size = n_nodes, nei = nei, p = 0)
+transitivity(g_lattice, type = "average")
+mean_distance(g_lattice)
+
+max(components(g)$csize)
+
+edge.attributes(g)$weight <- edges$n_games
+layout_fr <- layout_with_fr(g, weights = 1 / edge.attributes(g)$weight)  # inverse weight = shorter distance
+V(g)$color <- players$lang_color[match(V(g)$name, players$player_id)]
+
+
+par(mar = c(0.1, 0.1, 0.1, 0.1))
+
+plot(
+  g,
+  layout = layout_fr, 
+  edge.width = edge_width,
+  vertex.color = V(g)$color,
+  vertex.label.color = "black",
+  vertex.size = node_size,
+  vertex.label = NA,
+  node.label = NA, frame.plot = TRUE
+)
+
+text(1, 1, labels = "1975", pos = 2)
+
+
+focal_period <- 2022
+node_size <- 3
+edge_width <- 1
+
+edgelists <- list.files("data", pattern = "edgelist", full.names = TRUE)
+i <- which(periods$name == focal_period)
+edges <- read.csv(edgelists[i])
+
+g <- graph_from_edgelist(as.matrix(select(edges, from, to)), directed = FALSE)
+g_main <- induced_subgraph(g, components(g)$membership == which.max(components(g)$csize))
+transitivity(g_main, type = "average")
+mean_distance(g_main, directed = FALSE)
+
+n_nodes <- vcount(g_main) # num. verticies (nodes), aka `n` in igraph
+n_ties <- gsize(g_main)  # num. edges (ties), aka `m` in igraph
+
+g_rand <- sample_gnm(n_nodes, n_ties)
+transitivity(g_rand, type = "average")
+mean_distance(g_rand, directed = FALSE)
+
+k <- floor((2 * n_ties) / n_nodes)  # average degree
+nei <- round(k / 2) # better than floor...
+
+g_lattice <- sample_smallworld(dim = 1, size = n_nodes, nei = nei, p = 0)
+transitivity(g_lattice, type = "average")
+mean_distance(g_lattice)
+
+max(components(g)$csize)
+
+edge.attributes(g)$weight <- edges$n_games
+layout_fr <- layout_with_fr(g, weights = 1 / edge.attributes(g)$weight)  # inverse weight = shorter distance
+V(g)$color <- players$lang_color[match(V(g)$name, players$player_id)]
+
+
+par(mar = c(0.1, 0.1, 0.1, 0.1))
+
+plot(
+  g,
+  layout = layout_fr, 
+  edge.width = edge_width,
+  vertex.color = V(g)$color,
+  vertex.label.color = "black",
+  vertex.size = node_size,
+  vertex.label = NA,
+  node.label = NA, frame.plot = TRUE
+)
+
+text(1, 1, labels = "2024", pos = 2)
+
+dev.off()
+
+
 
 # it takes a while to load 
 
 dir_init("./figures/match_network")
+
+
+node_size <- 2
+edge_width <- 1
 
 edgelists <- list.files("data", pattern = "edgelist", full.names = TRUE)
 force_plots <- FALSE
@@ -152,7 +331,9 @@ periods$L_lattice <- NA
 periods$C_rand <- NA
 periods$L_rand <- NA
 periods$n_communities <- NA
+periods$n_communities_mc <- NA
 periods$community_size_avg <- NA
+periods$community_size_mc_avg <- NA
 periods$community_size_sd <- NA
 periods$community_diversity <- NA
 periods$community_modularity <- NA
@@ -180,7 +361,7 @@ for (i in 1:length(edgelists)) {
   stopifnot(all.equal(sum(component_weights), 1))
   periods$component_diversity[hit] <- exp(sum(component_weights * log(1/component_weights)))
 
-  # also try community-detection 
+  # also try community-detection_main 
   comm <- cluster_fast_greedy(g)
   periods$n_communities[hit] <- length(comm)
   periods$community_diversity[hit] <- exp(entropy(membership(comm)))
@@ -192,6 +373,10 @@ for (i in 1:length(edgelists)) {
 
   # calculate main-cluster statistics
   g_main <- induced_subgraph(g, components(g)$membership == which.max(components(g)$csize))
+  comm_mc <- cluster_fast_greedy(g_main)
+  periods$n_communities_mc[hit] <- length(comm_mc)
+  periods$community_size_mc_avg[hit] <- mean(table(membership(comm_mc)))
+
   periods$clustering_mc[hit] <- transitivity(g_main, type = "average")
   periods$avg_path_length_mc[hit] <- mean_distance(g_main, directed = FALSE)
   
@@ -216,10 +401,10 @@ for (i in 1:length(edgelists)) {
     plot(
       g,
       layout = layout_fr, 
-      edge.width = edge.attributes(g)$weight / max(edge.attributes(g)$weight) * 5 + 1,
+      edge.width = edge_width,
       vertex.color = V(g)$color,
       vertex.label.color = "black",
-      vertex.size = 1,
+      vertex.size = node_size,
       vertex.label = NA,
       node.label = NA,
       main = paste0("match network, ", periods$name[hit])
@@ -312,6 +497,37 @@ dev.off()
 
 
 
+
+png("figures/move12_diversity_pop_size_structure_mc.png", res = 300, units = "in", height = 3.5, width = 7.5)
+
+par(mfrow = c(1, 2))
+
+par(mar = c(4, 4, 0, 1))
+
+plot(periods$n_players, periods$move12_diversity, col = periods$era_color, pch = 20,
+ylab = "opening diversity", xlab = "number of players", log = "x", ylim = c(4, 17), xlim = c(20, 1500),
+frame.plot = TRUE, las = 1)
+
+txt_cex <- 0.8
+
+shadowtext(50, 6, labels = "Early Modern", col = "black", bg = "white", cex = txt_cex)
+shadowtext(60, 9, labels = "Imperial", col = "black", bg = "white", cex = txt_cex)
+shadowtext(140, 11, labels = "Cold War", col = "black", bg = "white", cex = txt_cex)
+shadowtext(400, 12, labels = "International", col = "black", bg = "white", cex = txt_cex)
+shadowtext(500, 6, labels = "Internet", col = "black", bg = "white", cex = txt_cex)
+shadowtext(1200, 7, labels = "SAI", col = "black", bg = "white", cex = txt_cex)
+
+par(mar = c(4, 4, 0, 1))
+
+plot(periods$community_size_mc_avg, periods$n_communities_mc, col = periods$era_color, pch = 20,
+ylab = "number of communities", xlab = "average community size", log = "x", xlim = c(6, 82), ylim = c(3, 23),
+frame.plot = TRUE, las = 1)
+
+dev.off()
+
+
+
+
 png("figures/community_stats_year.png", res = 300, units = "in", height = 4, width = 9)
 
 par(mfrow = c(1, 3))
@@ -355,23 +571,6 @@ ylab = "associativity", xlab = "year", xlim = c(1945, 2025))
 
 dev.off()
 
-
-
-# plot(periods$community_diversity, periods$community_modularity, col = periods$era_color, pch = 20)
-
-# plot(periods$community_diversity, periods$community_associativity, col = periods$era_color, pch = 20)
-
-# plot(periods$community_modularity, periods$community_associativity, col = periods$era_color, pch = 20)
-# # extreme correlation, basically the same measure
-# # high associativity = very modular groups
-# # high associativty meaning, there's few groups now...size of the group! 
-
-# periods$ln_n_players <- log(periods$n_players)
-
-# summary(lm(move12_diversity ~ community_diversity, data = periods))
-# summary(lm(move12_diversity ~ community_associativity, data = periods))
-# summary(lm(move12_diversity ~ community_diversity + community_associativity, data = periods))
-# summary(lm(move12_diversity ~ community_diversity + community_associativity + ln_n_players, data = periods))
 
 
 # both players and dyads increase tremendously in recent years
