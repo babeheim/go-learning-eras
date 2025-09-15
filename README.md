@@ -33,21 +33,20 @@ All materials are under the Creative Commons BY-NC-SA 4.0 license. See `LICENSE.
 
 ## files
 
-`/`
-├ `R_functions/` - folder with project-specific R functions for analysis
-├ `R_scripts/` - individual analysis scripts that perform calculations and generate figures
-├ `assets/` - a cool figure I made that's (not in the publication)
-├ `data/` - a processed version of the GoGod 2024 database
-│   ├ `games.csv` - one row per game, containing player ID for each player, date, and first 50 moves. Games are uniquely identified by `hash_id`.
-│   ├ `players.csv` - one row per player, including full name, biographical details, etc. Players are uniquely identified by `player_id`.
-│   ├ `eras.csv` - list of the six eras used in this study
-│   ├ `move12s.csv` - list of the relevant opening two moves
-│   └ `move13s.csv` - list of the relevant opening two moves
-├ `project_support.R` - script that loads all packages and functions needed for this workflow and sets a few workflow parameters, e.g. `project_seed`
-├ `0_init_project.R` - script to wipe folder of created assets in the `figures/` folder
-├ `1_analyze_diversity.R` - executes analysis scripts in `R_scripts/` and puts output into `figures/`
-├ `LICENSE.md` - text of the Creative Commons BY-NC-SA 4.0 license
-└ `README.md` - this file!
+- `R_functions/` - folder with project-specific R functions for analysis
+- `R_scripts/` - individual analysis scripts that perform calculations and generate figures
+- `assets/` - a cool figure I made that's (not in the publication)
+- `data/` - a processed version of the GoGod 2024 database
+   - `games.csv` - one row per game, containing player ID for each player, date, and first 50 moves. Games are uniquely identified by `hash_id`.
+   - `players.csv` - one row per player, including full name, biographical details, etc. Players are uniquely identified by `player_id`.
+   - `eras.csv` - list of the six eras used in this study
+   - `move12s.csv` - list of the relevant opening two moves
+   - `move13s.csv` - list of the relevant opening two moves
+- `project_support.R` - script that loads all packages and functions needed for this workflow and sets a few workflow parameters, e.g. `project_seed`
+- `0_init_project.R` - script to wipe folder of created assets in the `figures/` folder
+- `1_analyze_diversity.R` - executes analysis scripts in `R_scripts/` and puts output into `figures/`
+- `LICENSE.md` - text of the Creative Commons BY-NC-SA 4.0 license
+- `README.md` - this file!
 
 ## instructions
 
