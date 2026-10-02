@@ -13,7 +13,6 @@ library(glue)
 library(pander)
 library(loo)
 library(testthat)
-library(longformer)
 library(stringdist)
 library(philentropy) # for JSD, Jensen-Shannon Divergence
 

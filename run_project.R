@@ -1,6 +1,12 @@
 
 rm(list = ls())
 
+if (!requireNamespace("renv", quietly = TRUE)) {
+  install.packages("renv", repos = "https://cloud.r-project.org")
+}
+
+renv::restore(prompt = FALSE)
+
 source("project_support.R")
 
 dir_init("figures")
