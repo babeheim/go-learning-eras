@@ -3,6 +3,8 @@ rm(list = ls())
 
 source("project_support.R")
 
+dir_init("figures")
+
 tic("plot openings")
 source("R_scripts/plot_openings.R")
 toc(log = TRUE)

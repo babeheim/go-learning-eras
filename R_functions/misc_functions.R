@@ -111,26 +111,21 @@ texttab <- function(input.matrix, alignment = NA,
   return(output)
 }
 
-dir_init <- function(path, verbose = FALSE, overwrite = TRUE) {
-  if (substr(path, 1, 2) != "./") stop("path argument must be formatted
-    with './' at beginning")
-  contents <- dir(path, recursive = TRUE)
-  if (dir.exists(path)) {
-    if (overwrite) {
-      if (verbose) {
-        if (length(contents) == 0) print(paste("folder ", path, " created.", sep = ""))
-        if (length(contents) > 0) print(paste("folder ", path,
-          " wiped of ", length(contents), " files/folders.", sep = ""))
-      }
-      if (dir.exists(path)) unlink(path, recursive = TRUE)
-      dir.create(path)
-    }
-  } else {
+dir_init <- function(path, verbose = FALSE) {
+    existed <- dir.exists(path)
+
+    unlink(path, recursive = TRUE)
+    dir.create(path, recursive = TRUE)
+
     if (verbose) {
-      print(paste("folder ", path, " created.", sep = ""))
+        if (existed) {
+            message("Recreated empty directory: ", path)
+        } else {
+            message("Created directory: ", path)
+        }
     }
-    dir.create(path)
-  }
+
+    invisible(path)
 }
 
 col_alpha <- function(acol, alpha = 0.2) {
