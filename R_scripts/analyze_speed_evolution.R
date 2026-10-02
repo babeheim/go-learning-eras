@@ -1,6 +1,4 @@
 
-rm(list = ls())
-
 source("project_support.R")
 
 d <- read.csv("data/games.csv")
