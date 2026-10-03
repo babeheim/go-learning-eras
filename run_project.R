@@ -754,6 +754,36 @@ tryCatch(
 
 
     # ------------------------------------------------------------------------
+    # Analyze opening diversity CN
+    # ------------------------------------------------------------------------
+
+    timing_results[["analyze_opening_diversity_CN"]] <- run_script(
+      file = "R_scripts/analyze_opening_diversity_CN.R",
+      label = "analyze opening diversity in China"
+    )
+
+
+    # ------------------------------------------------------------------------
+    # Analyze opening diversity JP
+    # ------------------------------------------------------------------------
+
+    timing_results[["analyze_opening_diversity_JP"]] <- run_script(
+      file = "R_scripts/analyze_opening_diversity_JP.R",
+      label = "analyze opening diversity in Japan"
+    )
+
+
+    # ------------------------------------------------------------------------
+    # Analyze opening diversity KR
+    # ------------------------------------------------------------------------
+
+    timing_results[["analyze_opening_diversity_KR"]] <- run_script(
+      file = "R_scripts/analyze_opening_diversity_KR.R",
+      label = "analyze opening diversity in South Korea"
+    )
+
+
+    # ------------------------------------------------------------------------
     # Analyze speed evolution
     # ------------------------------------------------------------------------
 

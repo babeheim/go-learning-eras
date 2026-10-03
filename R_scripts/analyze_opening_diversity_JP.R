@@ -209,7 +209,13 @@ divergence_max <- 0.4
 left_year <- 1970
 right_year <- 2025
 
-png(glue("figures/move12_diversity_divergence_year_{country_code}.png"), res = 300, units = "in", height = 8, width = 8)
+png_name <- paste0(
+  "figures/move12_diversity_divergence_year_",
+  country_code,
+  ".png"
+)
+
+png(png_name, res = 300, units = "in", height = 8, width = 8)
 
 events <- list(
   list(

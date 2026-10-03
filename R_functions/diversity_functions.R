@@ -58,12 +58,6 @@ extract_game_moves <- function(sgf_moves, n_moves, cumulative = FALSE, unicode =
   return(moves)
 }
 
-surprisal <- function(x, base = exp(1)) {
-  p <- prop.table(table(x))
-  s <- log(1/p, base = base)
-  s[x]
-}
-
 entropy <- function(x, base = exp(1)) {
   p <- prop.table(table(x))
   sum(p * log(1/p, base = base))
@@ -84,15 +78,6 @@ move_richness <- function(moves) {
 
 move_entropy <- function(moves, base = exp(1)) {
   out <- apply(moves, 2, entropy, base = base)
-  out <- as.numeric(out)
-  return(out)
-}
-
-move_surprisals <- function(moves, base = exp(1)) {
-  out <- matrix(NA, nrow = nrow(moves), ncol = ncol(moves))
-  for (i in seq_len(ncol(moves))) {
-    out[,i] <- surprisal(moves[,i])
-  }
   out <- as.numeric(out)
   return(out)
 }

@@ -7,8 +7,6 @@ library(yaml)
 library(igraph)
 library(viridis)
 library(dplyr)
-library(glue)
-library(pander)
 library(stringdist)
 library(philentropy) # for JSD, Jensen-Shannon Divergence
 
@@ -24,7 +22,7 @@ set.seed(project_seed)
 options(warnPartialMatchDollar=TRUE)
 
 files <- list.files("R_functions", full.names = TRUE)
-for (i in 1:length(files)) source(files[i])
+for (i in seq_along(files)) source(files[i])
 
 n_chains <- 4
 n_iter <- 1000
