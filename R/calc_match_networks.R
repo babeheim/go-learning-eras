@@ -82,7 +82,6 @@ for (i in 1:nrow(periods)) {
   stopifnot(sum(edgelist$n_games) == length(tar))
   filename <- paste0("cached/edgelist_", periods$name[i], ".csv")
   write.csv(edgelist, filename, row.names = FALSE)
-  cat(filename, "\n")
 
 }
 

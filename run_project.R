@@ -628,14 +628,14 @@ tryCatch(
         }
 
         identical(
-          utils::package_version(locked),
-          utils::package_version(installed)
+          package_version(locked),
+          package_version(installed)
         )
       },
       package_table$locked_version,
       package_table$installed_version
     )
-    
+
     print(
       package_table,
       row.names = FALSE
