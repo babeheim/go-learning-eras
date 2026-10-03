@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   smoke-tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2

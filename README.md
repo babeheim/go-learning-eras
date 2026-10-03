@@ -70,22 +70,24 @@ Key files include:
 - `players.csv` — one row per player, including full name and biographical information. Players are uniquely identified by `player_id`.
 - `eras.csv` — definitions of the six historical eras used in the study.
 - `move12s.csv` — reference data used in the opening-sequence analyses.
-- `move13s.csv` — companion reference data used in the opening-sequence analyses.
+- `move123s.csv` — companion reference data used in the opening-sequence analyses.
 
 The workflow may also create derived or cached files under `data/`; these are documented in [`docs/execution-guide.md`](docs/execution-guide.md).
 
 ## Repository structure
 
 ```text
+cached/            Generated intermediate calculations
 data/              Processed analytical data and derived intermediate files
-R_functions/       Shared project-specific R functions
-R_scripts/         Analysis and figure-generation scripts
 docs/              Technical documentation
 figures/           Generated analysis outputs
 logs/              Generated execution logs
+R/                 Analysis and figure-generation scripts
+R/functions/       Shared project-specific R functions
+renv/              Project-local renv infrastructure
+tests/             Unit and project-integrity tests
 project_support.R  Shared project initialization and workflow parameters
 run_project.R      Canonical workflow entry point
-renv/              Project-local renv infrastructure
 renv.lock          Locked R package environment
 LICENSE.md         Project license
 README.md          This file

@@ -75,7 +75,7 @@ stan_data <- list(
   y = period_traits$delta_p_su
 )
 
-fit <- model$sample(data = stan_data)
+fit <- model$sample(data = stan_data, seed = project_seed)
 
 
 
@@ -111,7 +111,7 @@ stan_data <- list(
 fit <- model$sample(parallel_chains = n_chains, chains = n_chains,
   iter_warmup = floor(n_iter/2), iter_sampling = n_iter, adapt_delta = adapt_delta,
   max_treedepth = 15, data = stan_data, step_size = 0.1,
-  refresh = 100)
+  refresh = 100, seed = project_seed)
 
 samples <- as_draws_rvars(fit$draws())
 
@@ -164,7 +164,7 @@ stan_data <- list(
 fit <- model$sample(parallel_chains = n_chains, chains = n_chains,
   iter_warmup = floor(n_iter/2), iter_sampling = n_iter, adapt_delta = adapt_delta,
   max_treedepth = 15, data = stan_data, step_size = 0.1,
-  refresh = 100)
+  refresh = 100, seed = project_seed)
 
 samples <- as_draws_rvars(fit$draws())
 

@@ -620,10 +620,22 @@ tryCatch(
       drop = FALSE
     ]
 
-    package_table$version_match <-
-      package_table$locked_version ==
-      package_table$installed_version
+    package_table$version_match <- mapply(
+      function(locked, installed) {
 
+        if (is.na(locked) || is.na(installed)) {
+          return(FALSE)
+        }
+
+        identical(
+          utils::package_version(locked),
+          utils::package_version(installed)
+        )
+      },
+      package_table$locked_version,
+      package_table$installed_version
+    )
+    
     print(
       package_table,
       row.names = FALSE

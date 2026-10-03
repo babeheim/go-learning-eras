@@ -12,7 +12,9 @@ calc_js_divergence <- function(x, y) {
   }
   moves$prop_x = moves$n_x / sum(moves$n_x)
   moves$prop_y = moves$n_y / sum(moves$n_y)
-  out <- JSD(rbind(moves$prop_x, moves$prop_y), unit = "log2")
+  out <- suppressMessages(
+    philentropy::JSD(rbind(moves$prop_x, moves$prop_y), unit = "log2")
+  )
   return(out)
 }
 
