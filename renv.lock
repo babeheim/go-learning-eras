@@ -3,6 +3,10 @@
     "Version": "4.6.1",
     "Repositories": [
       {
+        "Name": "STAN",
+        "URL": "https://stan-dev.r-universe.dev"
+      },
+      {
         "Name": "CRAN",
         "URL": "https://cloud.r-project.org"
       }
