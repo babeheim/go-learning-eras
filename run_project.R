@@ -775,6 +775,13 @@ tryCatch(
       "Figures directory initialized.\n"
     )
 
+    dir_init(
+      "cached"
+    )
+
+    cat(
+      "Cached directory initialized.\n"
+    )
 
     # ========================================================================
     # Analysis
