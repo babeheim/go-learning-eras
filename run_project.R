@@ -2,14 +2,15 @@
 # Run project
 #
 # This script:
-#   1. restores the package environment recorded in renv.lock
-#   2. creates a timestamped execution log
-#   3. records Git, R, renv, package-version, and CmdStan information
-#   4. loads project_support.R
-#   5. runs the complete analysis workflow
-#   6. records tictoc timings
-#   7. records sessionInfo()
-#   8. records SUCCESS / FAILED status
+#   1. loads R/functions/restore_environment.R
+#   2. restores the package environment recorded in renv.lock
+#   3. creates a timestamped execution log
+#   4. records Git, R, renv, package-version, and CmdStan information
+#   5. loads project_support.R
+#   6. runs the complete analysis workflow
+#   7. records tictoc timings
+#   8. records sessionInfo()
+#   9. records SUCCESS / FAILED status
 #
 # Run from the project root with:
 #
@@ -69,17 +70,40 @@ latest_log <- file.path(
 
 
 # ============================================================================
-# Bootstrap renv
+# Load environment-restore helper
 # ============================================================================
 
-if (!requireNamespace(
-  "renv",
-  quietly = TRUE
+restore_helper <- file.path(
+  project_root,
+  "R",
+  "functions",
+  "restore_environment.R"
+)
+
+if (!file.exists(
+  restore_helper
 )) {
 
-  install.packages(
-    "renv",
-    repos = "https://cloud.r-project.org"
+  stop(
+    "Environment restore helper was not found: ",
+    restore_helper
+  )
+}
+
+source(
+  restore_helper,
+  local = FALSE
+)
+
+if (!exists(
+  "restore_environment",
+  mode = "function",
+  inherits = TRUE
+)) {
+
+  stop(
+    "R/functions/restore_environment.R did not define ",
+    "restore_environment()."
   )
 }
 
@@ -279,6 +303,44 @@ tryCatch(
   {
 
     # ========================================================================
+    # Verify renv.lock exists
+    # ========================================================================
+
+    if (!file.exists(
+      file.path(
+        project_root,
+        "renv.lock"
+      )
+    )) {
+
+      stop(
+        "renv.lock was not found in the project root."
+      )
+    }
+
+
+    # ========================================================================
+    # Restore package environment
+    # ========================================================================
+
+    section_header(
+      "RENV RESTORE"
+    )
+
+    cat(
+      "Restoring package environment from renv.lock...\n"
+    )
+
+    restore_environment(
+      project_root
+    )
+
+    cat(
+      "\nrenv restore completed.\n"
+    )
+
+
+    # ========================================================================
     # Run metadata
     # ========================================================================
 
@@ -397,7 +459,7 @@ tryCatch(
 
 
     # ========================================================================
-    # R environment before restoration
+    # R environment
     # ========================================================================
 
     section_header(
@@ -420,23 +482,6 @@ tryCatch(
       "\n",
       sep = ""
     )
-
-
-    # ========================================================================
-    # Verify renv.lock exists
-    # ========================================================================
-
-    if (!file.exists(
-      file.path(
-        project_root,
-        "renv.lock"
-      )
-    )) {
-
-      stop(
-        "renv.lock was not found in the project root."
-      )
-    }
 
 
     # ========================================================================
@@ -464,29 +509,6 @@ tryCatch(
       locked_renv_version,
       "\n",
       sep = ""
-    )
-
-
-    # ========================================================================
-    # Restore package environment
-    # ========================================================================
-
-    section_header(
-      "RENV RESTORE"
-    )
-
-    cat(
-      "Restoring package environment from renv.lock...\n"
-    )
-
-    renv::restore(
-      project = project_root,
-      prompt = FALSE,
-      retry = FALSE
-    )
-
-    cat(
-      "\nrenv restore completed.\n"
     )
 
 
@@ -737,10 +759,6 @@ tryCatch(
       "figures"
     )
 
-    dir_init(
-      "cached"
-    )
-
     cat(
       "Figures directory initialized.\n"
     )
@@ -760,7 +778,7 @@ tryCatch(
     # ------------------------------------------------------------------------
 
     timing_results[["plot_openings"]] <- run_script(
-      file = "R/plot_openings.R",
+      file = "R_scripts/plot_openings.R",
       label = "plot openings"
     )
 
@@ -770,7 +788,7 @@ tryCatch(
     # ------------------------------------------------------------------------
 
     timing_results[["plot_opening_trees"]] <- run_script(
-      file = "R/plot_opening_trees.R",
+      file = "R_scripts/plot_opening_trees.R",
       label = "plot opening trees"
     )
 
@@ -780,7 +798,7 @@ tryCatch(
     # ------------------------------------------------------------------------
 
     timing_results[["plot_database_coverage"]] <- run_script(
-      file = "R/plot_database_coverage.R",
+      file = "R_scripts/plot_database_coverage.R",
       label = "plot database coverage"
     )
 
@@ -790,7 +808,7 @@ tryCatch(
     # ------------------------------------------------------------------------
 
     timing_results[["calc_game_distances"]] <- run_script(
-      file = "R/calc_game_distances.R",
+      file = "R_scripts/calc_game_distances.R",
       label = "calculate game distances"
     )
 
@@ -800,7 +818,7 @@ tryCatch(
     # ------------------------------------------------------------------------
 
     timing_results[["calc_match_networks"]] <- run_script(
-      file = "R/calc_match_networks.R",
+      file = "R_scripts/calc_match_networks.R",
       label = "calculate match networks"
     )
 
@@ -810,7 +828,7 @@ tryCatch(
     # ------------------------------------------------------------------------
 
     timing_results[["analyze_opening_diversity"]] <- run_script(
-      file = "R/analyze_opening_diversity.R",
+      file = "R_scripts/analyze_opening_diversity.R",
       label = "analyze opening diversity"
     )
 
@@ -820,7 +838,7 @@ tryCatch(
     # ------------------------------------------------------------------------
 
     timing_results[["analyze_speed_evolution"]] <- run_script(
-      file = "R/analyze_speed_evolution.R",
+      file = "R_scripts/analyze_speed_evolution.R",
       label = "analyze speed evolution"
     )
 
