@@ -217,10 +217,8 @@ The algorithm is:
 Conceptually,
 
 $$
-\operatorname{JSD}(P,Q)
-=
-\frac{1}{2}D_{KL}(P\|M)
-+
+\operatorname{JSD}(P,Q) =
+\frac{1}{2}D_{KL}(P\|M) +
 \frac{1}{2}D_{KL}(Q\|M),
 $$
 
@@ -626,9 +624,7 @@ $$
 The script calculates component diversity as
 
 $$
-D_{components}
-=
-\exp\left(\sum_k p_k \log(1/p_k)\right).
+D_{components} =\exp\left(\sum_k p_k \log(1/p_k)\right).
 $$
 
 This is the effective number of equally sized connected components represented by the observed component-size distribution.
@@ -857,9 +853,7 @@ The main initial ordering is descending old-period count. Several named opening 
 For every period-opening combination, the code calculates:
 
 $$
-f_{o,t}
-=
-\frac{n_{o,t}}{N_t},
+f_{o,t} = \frac{n_{o,t}}{N_t},
 $$
 
 where `n_{o,t}` is the number of games using opening `o` in period `t` and `N_t` is the number of games in the period.
@@ -912,9 +906,7 @@ The code next samples up to 100 games without replacement from each period and c
 Because column `j` of `game_moves` is the cumulative prefix through move `j`, the resulting quantity is
 
 $$
-H_j(t)
-=
-H(\text{opening prefixes through move }j\text{ in period }t).
+H_j(t) = H(\text{opening prefixes through move }j\text{ in period }t).
 $$
 
 It is therefore **cumulative opening-sequence diversity through move `j`**, not the marginal entropy of the move made at turn `j`.
@@ -926,9 +918,7 @@ For example, at move 5, two games are treated as different variants if any of th
 For each period after the first, and for each move depth `j`, the script calculates JSD between cumulative opening-prefix distributions in the current and previous periods:
 
 $$
-JSD_j(t)
-=
-JSD(P_{j,t-1},P_{j,t}).
+JSD_j(t) = JSD(P_{j,t-1},P_{j,t}).
 $$
 
 This gives a depth-resolved picture of historical change: early move positions can be stable while longer opening sequences change substantially, or vice versa.
@@ -951,9 +941,7 @@ The main stored era-level result is entropy by move depth.
 The final diversity figure compares each era with the preceding era. At each move depth `j`, it plots
 
 $$
-\Delta H_j(e)
-=
-H_j(e)-H_j(e-1).
+\Delta H_j(e) = H_j(e)-H_j(e-1).
 $$
 
 Positive values indicate that the repertoire of opening sequences through that depth became more diverse relative to the preceding era; negative values indicate contraction.
@@ -1017,9 +1005,7 @@ The analysis tracks ten traits:
 For every trait `g` and year `t`, the empirical frequency is
 
 $$
-p_{g,t}
-=
-\frac{\text{games with trait }g\text{ in year }t}
+p_{g,t} = \frac{\text{games with trait }g\text{ in year }t}
        {\text{games in year }t}.
 $$
 
@@ -1030,9 +1016,7 @@ For the first-move `pd` trait, the numerator is the number of games whose first 
 For each trait independently, the code calculates
 
 $$
-\Delta p_{g,t}
-=
-p_{g,t}-p_{g,t-1}.
+\Delta p_{g,t} = p_{g,t}-p_{g,t-1}.
 $$
 
 The first year for each trait has no previous-year difference and is assigned `NA`.
@@ -1042,17 +1026,13 @@ The first year for each trait has no previous-year difference and is assigned `N
 Traits naturally differ in how much their frequencies fluctuate. To place them on a common scale, the script calculates for each trait:
 
 $$
-s_g
-=
-SD_t(\Delta p_{g,t}).
+s_g = SD_t(\Delta p_{g,t}).
 $$
 
 Each annual frequency change is then standardized:
 
 $$
-y_{g,t}
-=
-\frac{\Delta p_{g,t}}{s_g}.
+y_{g,t} = \frac{\Delta p_{g,t}}{s_g}.
 $$
 
 Thus a value of `y = 1` means the trait changed by one of its own historical standard deviations of annual frequency change.
@@ -1126,9 +1106,7 @@ $$
 The code constructs a squared-exponential Gaussian-process covariance matrix:
 
 $$
-K_{tt'}
-=
-\alpha^2
+K_{tt'} = \alpha^2
 \exp\left[
 -\frac{(x_t-x_{t'})^2}{2\rho^2}
 \right],
