@@ -1,6 +1,6 @@
 # go-learning-eras
 
-[![Project integrity tests](https://github.com/OWNER/go-learning-eras/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/OWNER/go-learning-eras/actions/workflows/ci.yml)
+[![Project integrity tests](https://github.com/babeheim/go-learning-eras/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/babeheim/go-learning-eras/actions/workflows/ci.yml)
 ![renv](https://img.shields.io/badge/environment-renv-blue)
 
 Long-term cultural evolution of opening strategies in professional Go.
