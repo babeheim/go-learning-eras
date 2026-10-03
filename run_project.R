@@ -4,7 +4,7 @@
 # This script:
 #   1. restores the package environment recorded in renv.lock
 #   2. creates a timestamped execution log
-#   3. records Git, R, renv, and package-version information
+#   3. records Git, R, renv, package-version, and CmdStan information
 #   4. loads project_support.R
 #   5. runs the complete analysis workflow
 #   6. records tictoc timings
@@ -643,6 +643,64 @@ tryCatch(
 
 
     # ========================================================================
+    # CmdStan environment
+    # ========================================================================
+
+    section_header(
+      "CMDSTAN ENVIRONMENT"
+    )
+
+    cmdstanr_version <- if (requireNamespace(
+      "cmdstanr",
+      quietly = TRUE
+    )) {
+
+      as.character(
+        packageVersion(
+          "cmdstanr"
+        )
+      )
+
+    } else {
+
+      NA_character_
+    }
+
+    cmdstan_version <- tryCatch(
+      {
+        as.character(
+          cmdstanr::cmdstan_version()
+        )
+      },
+      error = function(e) {
+        NA_character_
+      }
+    )
+
+    cat(
+      "cmdstanr version: ",
+      if (is.na(
+        cmdstanr_version
+      )) {
+        "not available"
+      } else {
+        cmdstanr_version
+      },
+      "\n",
+      "CmdStan version:  ",
+      if (is.na(
+        cmdstan_version
+      )) {
+        "not available"
+      } else {
+        cmdstan_version
+      },
+      "\n",
+      sep = ""
+    )
+
+
+    # ========================================================================
     # Load project support
     # ========================================================================
 
@@ -750,36 +808,6 @@ tryCatch(
     timing_results[["analyze_opening_diversity"]] <- run_script(
       file = "R_scripts/analyze_opening_diversity.R",
       label = "analyze opening diversity"
-    )
-
-
-    # ------------------------------------------------------------------------
-    # Analyze opening diversity CN
-    # ------------------------------------------------------------------------
-
-    timing_results[["analyze_opening_diversity_CN"]] <- run_script(
-      file = "R_scripts/analyze_opening_diversity_CN.R",
-      label = "analyze opening diversity in China"
-    )
-
-
-    # ------------------------------------------------------------------------
-    # Analyze opening diversity JP
-    # ------------------------------------------------------------------------
-
-    timing_results[["analyze_opening_diversity_JP"]] <- run_script(
-      file = "R_scripts/analyze_opening_diversity_JP.R",
-      label = "analyze opening diversity in Japan"
-    )
-
-
-    # ------------------------------------------------------------------------
-    # Analyze opening diversity KR
-    # ------------------------------------------------------------------------
-
-    timing_results[["analyze_opening_diversity_KR"]] <- run_script(
-      file = "R_scripts/analyze_opening_diversity_KR.R",
-      label = "analyze opening diversity in South Korea"
     )
 
 
