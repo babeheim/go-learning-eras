@@ -135,10 +135,10 @@ The distinction is purely representational but should be preserved when reproduc
 
 The project defines Shannon entropy as
 
-\[
+$$
 H(X) = \sum_i p_i \log\left(\frac{1}{p_i}\right)
      = -\sum_i p_i \log p_i,
-\]
+$$
 
 using natural logarithms by default.
 
@@ -157,9 +157,9 @@ Entropy is therefore measured in nats unless another base is supplied.
 
 Many analyses exponentiate Shannon entropy:
 
-\[
+$$
 D = e^H.
-\]
+$$
 
 This is the Hill number of order 1: the number of equally frequent categories that would produce the observed Shannon entropy.
 
@@ -177,9 +177,9 @@ This distinction matters because `richness()` is separately defined as the liter
 
 Richness is simply
 
-\[
+$$
 R = \text{number of distinct observed categories}.
-\]
+$$
 
 The implementation is:
 
@@ -195,9 +195,9 @@ richness <- function(x) {
 
 In several parts of the opening-diversity analysis, evenness is calculated as
 
-\[
+$$
 E = \frac{e^H - 1}{R - 1},
-\]
+$$
 
 where `R` is richness and `e^H` is effective Shannon diversity.
 
@@ -216,19 +216,19 @@ The algorithm is:
 
 Conceptually,
 
-\[
+$$
 \operatorname{JSD}(P,Q)
 =
 \frac{1}{2}D_{KL}(P\|M)
 +
 \frac{1}{2}D_{KL}(Q\|M),
-\]
+$$
 
 where
 
-\[
+$$
 M = \frac{P+Q}{2}.
-\]
+$$
 
 Because the implementation uses base-2 logarithms, the conventional two-distribution JSD is expressed in bits. Identical empirical distributions have JSD 0; increasingly different distributions produce larger values.
 
@@ -287,15 +287,15 @@ For a focal opening prefix:
 5. Convert counts to empirical frequencies `p_i`.
 6. Calculate the effective number of next moves:
 
-   \[
+   $$
    N_{\mathrm{eff}} = \exp\left(\sum_i p_i \log(1/p_i)\right).
-   \]
+   $$
 
 7. Retain at most the top
 
-   \[
+   $$
    \lceil N_{\mathrm{eff}} \rceil
-   \]
+   $$
 
    next moves.
 8. Apply an additional frequency threshold, retaining only next moves with empirical frequency greater than 0.11.
@@ -365,15 +365,15 @@ The default pruning rule is based on the effective number of child states.
 
 For a parent with child entropy `H`, calculate
 
-\[
+$$
 D_{child}=e^H.
-\]
+$$
 
 Then retain the most frequent
 
-\[
+$$
 \min(\lceil D_{child}\rceil, R_{child})
-\]
+$$
 
 children, where `R_child` is the literal number of observed child states.
 
@@ -401,9 +401,9 @@ For each link, `game_count` is the number of sampled games following that specif
 
 Edge width in the final plot is proportional to
 
-\[
+$$
 (\text{game count})^{1/3},
-\]
+$$
 
 multiplied by an era-specific line-weight constant. The cube-root transformation compresses large count differences so low-frequency branches remain visible.
 
@@ -413,9 +413,9 @@ Two-move states are assigned the predefined colors in `move12s.csv`.
 
 For deeper nodes, color is inherited by weighted interpolation from parent colors. If a node has parent colors `c_1, ..., c_k` and incoming game counts `w_1, ..., w_k`, the RGB values of the colors are combined using normalized weights
 
-\[
+$$
 \tilde w_i = \frac{w_i}{\sum_j w_j}.
-\]
+$$
 
 Thus a convergent state receives a mixture representing the relative frequencies of its incoming colored lineages.
 
@@ -465,9 +465,9 @@ For each era in `eras.csv`, the algorithm samples exactly 1,000 games without re
 
 If there are `E` eras, the distance analysis therefore contains
 
-\[
+$$
 1000E
-\]
+$$
 
 games, with equal representation from each era regardless of original database size.
 
@@ -553,14 +553,14 @@ Each game receives a period label according to its year:
 
 In code:
 
-\[
+$$
 \text{period}=
 \begin{cases}
 y - (y \bmod 50) + 25, & y < 1850,\\
 y - (y \bmod 10) + 5, & 1850 \le y \le 1950,\\
 y, & y > 1950.
 \end{cases}
-\]
+$$
 
 This gives higher temporal resolution where the database is denser.
 
@@ -568,9 +568,9 @@ This gives higher temporal resolution where the database is denser.
 
 For each period, the script calculates two-move opening diversity as
 
-\[
+$$
 D_t = \exp(H(\text{move12}_t)).
-\]
+$$
 
 These values are later compared descriptively with network properties.
 
@@ -619,17 +619,17 @@ For an undirected graph, degree is the number of distinct opponents represented 
 
 Let connected component sizes be `n_1, ..., n_K`, and let
 
-\[
+$$
 p_k = \frac{n_k}{N}.
-\]
+$$
 
 The script calculates component diversity as
 
-\[
+$$
 D_{components}
 =
 \exp\left(\sum_k p_k \log(1/p_k)\right).
-\]
+$$
 
 This is the effective number of equally sized connected components represented by the observed component-size distribution.
 
@@ -651,9 +651,9 @@ For the detected partition, the script records:
 
 Community membership is treated as a categorical variable over players. If `p_c` is the fraction of players assigned to community `c`, the code calculates
 
-\[
+$$
 D_{community}=\exp\left(-\sum_c p_c \log p_c\right).
-\]
+$$
 
 This is the effective number of equally sized communities.
 
@@ -711,15 +711,15 @@ The random graph therefore preserves node count and edge count, but not the obse
 
 The code estimates observed mean degree as
 
-\[
+$$
 k = \left\lfloor \frac{2M}{N} \right\rfloor
-\]
+$$
 
 and sets
 
-\[
+$$
 \text{nei}=\left\lfloor\frac{k}{2}\right\rfloor.
-\]
+$$
 
 It then generates a one-dimensional Watts–Strogatz-style ring lattice with rewiring probability zero:
 
@@ -748,19 +748,19 @@ For the observed largest component, let:
 
 The code defines a normalized path-length index:
 
-\[
+$$
 L_i =
 \frac{L-L_{lattice}}
      {L_{rand}-L_{lattice}},
-\]
+$$
 
 and a normalized clustering index:
 
-\[
+$$
 C_i =
 \frac{C-C_{rand}}
      {C_{lattice}-C_{rand}}.
-\]
+$$
 
 The comments interpret these as:
 
@@ -771,9 +771,9 @@ The comments interpret these as:
 
 The final small-world index is
 
-\[
+$$
 SWI = L_i C_i.
-\]
+$$
 
 A network scores highly when it combines relatively random-like short path lengths with relatively lattice-like high clustering.
 
@@ -817,15 +817,15 @@ The script defines each game's two-move opening (`move12`) and computes:
 
 ### Richness
 
-\[
+$$
 R = \text{number of distinct move12 strings}.
-\]
+$$
 
 ### Effective Shannon diversity
 
-\[
+$$
 D = e^{H(move12)}.
-\]
+$$
 
 ### Concentration counts
 
@@ -856,11 +856,11 @@ The main initial ordering is descending old-period count. Several named opening 
 
 For every period-opening combination, the code calculates:
 
-\[
+$$
 f_{o,t}
 =
 \frac{n_{o,t}}{N_t},
-\]
+$$
 
 where `n_{o,t}` is the number of games using opening `o` in period `t` and `N_t` is the number of games in the period.
 
@@ -897,9 +897,9 @@ No bootstrap quantile interval is retained in the current implementation; the bo
 
 For consecutive periods `t-1` and `t`, opening turnover is measured as
 
-\[
+$$
 JSD(P_{t-1},P_t),
-\]
+$$
 
 where the distributions are empirical frequencies of two-move opening types in the bootstrap samples.
 
@@ -911,11 +911,11 @@ The code next samples up to 100 games without replacement from each period and c
 
 Because column `j` of `game_moves` is the cumulative prefix through move `j`, the resulting quantity is
 
-\[
+$$
 H_j(t)
 =
 H(\text{opening prefixes through move }j\text{ in period }t).
-\]
+$$
 
 It is therefore **cumulative opening-sequence diversity through move `j`**, not the marginal entropy of the move made at turn `j`.
 
@@ -925,11 +925,11 @@ For example, at move 5, two games are treated as different variants if any of th
 
 For each period after the first, and for each move depth `j`, the script calculates JSD between cumulative opening-prefix distributions in the current and previous periods:
 
-\[
+$$
 JSD_j(t)
 =
 JSD(P_{j,t-1},P_{j,t}).
-\]
+$$
 
 This gives a depth-resolved picture of historical change: early move positions can be stable while longer opening sequences change substantially, or vice versa.
 
@@ -950,11 +950,11 @@ The main stored era-level result is entropy by move depth.
 
 The final diversity figure compares each era with the preceding era. At each move depth `j`, it plots
 
-\[
+$$
 \Delta H_j(e)
 =
 H_j(e)-H_j(e-1).
-\]
+$$
 
 Positive values indicate that the repertoire of opening sequences through that depth became more diverse relative to the preceding era; negative values indicate contraction.
 
@@ -1016,12 +1016,12 @@ The analysis tracks ten traits:
 
 For every trait `g` and year `t`, the empirical frequency is
 
-\[
+$$
 p_{g,t}
 =
 \frac{\text{games with trait }g\text{ in year }t}
        {\text{games in year }t}.
-\]
+$$
 
 For the first-move `pd` trait, the numerator is the number of games whose first SGF coordinate is `pd`.
 
@@ -1029,11 +1029,11 @@ For the first-move `pd` trait, the numerator is the number of games whose first 
 
 For each trait independently, the code calculates
 
-\[
+$$
 \Delta p_{g,t}
 =
 p_{g,t}-p_{g,t-1}.
-\]
+$$
 
 The first year for each trait has no previous-year difference and is assigned `NA`.
 
@@ -1041,19 +1041,19 @@ The first year for each trait has no previous-year difference and is assigned `N
 
 Traits naturally differ in how much their frequencies fluctuate. To place them on a common scale, the script calculates for each trait:
 
-\[
+$$
 s_g
 =
 SD_t(\Delta p_{g,t}).
-\]
+$$
 
 Each annual frequency change is then standardized:
 
-\[
+$$
 y_{g,t}
 =
 \frac{\Delta p_{g,t}}{s_g}.
-\]
+$$
 
 Thus a value of `y = 1` means the trait changed by one of its own historical standard deviations of annual frequency change.
 
@@ -1063,9 +1063,9 @@ The model therefore measures cultural-change speed in **trait-specific standard-
 
 Before fitting the Bayesian models, the script calculates the standard deviation of `y` across focal traits within each year:
 
-\[
+$$
 s^{raw}_t = SD_g(y_{g,t}).
-\]
+$$
 
 These empirical annual standard deviations are plotted as points in the final figure.
 
@@ -1073,19 +1073,19 @@ These empirical annual standard deviations are plotted as points in the final fi
 
 The first Stan model assumes all standardized trait changes arise from one normal distribution:
 
-\[
+$$
 y_i \sim Normal(\mu,\sigma).
-\]
+$$
 
 Priors are:
 
-\[
+$$
 \mu \sim Normal(0,10),
-\]
+$$
 
-\[
+$$
 \sigma \sim Exponential(1).
-\]
+$$
 
 This is a baseline model with one global pace parameter.
 
@@ -1095,15 +1095,15 @@ Its fit is not used in the final plot; it serves as an intermediate modeling ste
 
 The second model gives each year its own scale parameter:
 
-\[
+$$
 y_i \sim Normal(\mu,\sigma_{t[i]}).
-\]
+$$
 
 with
 
-\[
+$$
 \sigma_t \sim Exponential(1)
-\]
+$$
 
 independently across years.
 
@@ -1119,20 +1119,20 @@ The final model treats the log annual standard deviation as a smooth latent func
 
 Let
 
-\[
+$$
 \eta_t = \log \sigma_t.
-\]
+$$
 
 The code constructs a squared-exponential Gaussian-process covariance matrix:
 
-\[
+$$
 K_{tt'}
 =
 \alpha^2
 \exp\left[
 -\frac{(x_t-x_{t'})^2}{2\rho^2}
 \right],
-\]
+$$
 
 where annual locations are coded as equally spaced integers.
 
@@ -1140,41 +1140,41 @@ A small diagonal jitter (`1e-6`) is added for numerical stability.
 
 Instead of sampling the correlated latent vector directly, the model uses a non-centered parameterization:
 
-\[
+$$
 z \sim Normal(0,I),
-\]
+$$
 
-\[
+$$
 \eta = L_K z,
-\]
+$$
 
 where `L_K` is the Cholesky factor of `K`.
 
 The annual pace parameter is then
 
-\[
+$$
 \sigma_t = e^{\eta_t}.
-\]
+$$
 
 The observation model is
 
-\[
+$$
 y_i \sim Normal(\mu,\sigma_{t[i]}).
-\]
+$$
 
 Priors are:
 
-\[
+$$
 \mu \sim Normal(0,10),
-\]
+$$
 
-\[
+$$
 \rho \sim Normal(6,1), \qquad \rho > 0,
-\]
+$$
 
-\[
+$$
 \alpha \sim Normal(1,0.5), \qquad \alpha > 0.
-\]
+$$
 
 Here:
 
