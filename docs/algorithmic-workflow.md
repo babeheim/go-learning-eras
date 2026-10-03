@@ -217,7 +217,7 @@ The algorithm is:
 Conceptually,
 
 $$
-\operatorname{JSD}(P,Q) =
+\mathrm{JSD}(P,Q) =
 \frac{1}{2}D_{KL}(P\|M) +
 \frac{1}{2}D_{KL}(Q\|M),
 $$
