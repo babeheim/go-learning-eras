@@ -1,5 +1,3 @@
- 
-source("project_support.R")
 
 games <- read.csv("data/games.csv")
 eras <- read.csv("data/eras.csv")
@@ -268,7 +266,7 @@ for (i in 1:nrow(period_moves)) {
   if (length(tar) > 0) {
     ceiling <- periods$base + period_moves$prop_games[tar]
     polygon(c(period_moves$period[tar], rev(period_moves$period[tar])), c(periods$base, rev
-    (ceiling)), col = col_alpha(period_moves$col[tar[1]], fill_alpha), border = gray(0.7, 0.5))
+    (ceiling)), col = adjustcolor(period_moves$col[tar[1]], fill_alpha), border = gray(0.7, 0.5))
     periods$base <- ceiling
   }
 }
@@ -307,7 +305,7 @@ plot(NULL, ylab = "move12 divergence", xlab = "", xlim = c(left_year, middle_yea
   xaxt = "n", xaxs="i", yaxs="i", ylim = c(0, divergence_max),
   frame.plot = FALSE, las = 1, yaxt = "n")
 
-abline(h = seq(0, divergence_max, .10), col = col_alpha("blue", 0.2))
+abline(h = seq(0, divergence_max, .10), col = adjustcolor("blue", 0.2))
 
 points(periods$name, periods$move12_divergence, type = "o", pch = 20, col = "blue")
 
@@ -330,7 +328,7 @@ for (i in 1:nrow(period_moves)) {
   if (length(tar) > 0) {
     ceiling <- periods$base + period_moves$prop_games[tar]
     polygon(c(period_moves$period[tar], rev(period_moves$period[tar])), c(periods$base, rev
-    (ceiling)), col = col_alpha(period_moves$col[tar[1]], fill_alpha), border = gray(0.7, 0.5))
+    (ceiling)), col = adjustcolor(period_moves$col[tar[1]], fill_alpha), border = gray(0.7, 0.5))
     periods$base <- ceiling
   }
 }
@@ -366,7 +364,7 @@ par(mar = c(5, 0, 0, 2))
 plot(NULL, xlab = "", xlim = c(middle_year, right_year), xaxt = "n",
   xaxs="i", yaxs="i", ylim = c(0, divergence_max), frame.plot = FALSE, las = 1, yaxt = "n")
 
-abline(h = seq(0, divergence_max, .10), col = col_alpha("blue", 0.2))
+abline(h = seq(0, divergence_max, .10), col = adjustcolor("blue", 0.2))
 
 points(periods$name, periods$move12_divergence, type = "o", pch = 20, col = "blue")
 
@@ -411,7 +409,7 @@ for (i in 1:nrow(period_moves)) {
   if (length(tar) > 0) {
     ceiling <- periods$base + period_moves$prop_games[tar]
     polygon(c(period_moves$period[tar], rev(period_moves$period[tar])), c(periods$base, rev
-    (ceiling)), col = col_alpha(period_moves$col[tar[1]], fill_alpha), border = gray(0.7, 0.5))
+    (ceiling)), col = adjustcolor(period_moves$col[tar[1]], fill_alpha), border = gray(0.7, 0.5))
     periods$base <- ceiling
   }
 }
@@ -450,7 +448,7 @@ plot(NULL, ylab = "move12 divergence", xlab = "", xlim = c(left_year, right_year
   xaxt = "n", xaxs="i", yaxs="i", ylim = c(0, divergence_max),
   frame.plot = FALSE, las = 1, yaxt = "n")
 
-abline(h = seq(0, divergence_max, .10), col = col_alpha("blue", 0.2))
+abline(h = seq(0, divergence_max, .10), col = adjustcolor("blue", 0.2))
 
 points(periods$name, periods$move12_divergence, type = "o", pch = 20, col = "blue")
 

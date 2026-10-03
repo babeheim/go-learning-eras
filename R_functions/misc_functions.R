@@ -53,35 +53,6 @@ shadowtext <- function(x, y=NULL, labels, col='black', bg='white',
     text(xy$x, xy$y, labels, col=col, ... )
 }
 
-logistic <- function(x) exp(x) / (1 + exp(x))
-
-gradient_maker <- function(start=NA, stop=NA, cols=c("darkorange", "white", "darkcyan"), vis=FALSE, n=1000){
-    if(is.na(start) | is.na(stop)) stop("need to specify start and stop points on a numerical scale")
-    colfunc <- colorRampPalette(cols)
-    color.list <- colfunc(n)
-    color.locations <- seq(start, stop, length=n)
-    names(color.locations) <- color.list
-    if(vis==TRUE) plot(color.locations, rep(1, n), col=color.list, pch="|", ylim=c(0.9, 1.1), cex=5)
-    return(color.locations)
-}
-
-data_gradient <- function(data, colors=c("darkorange", "white", "darkcyan"), my.start=NA, my.stop=NA){
-    if(is.na(my.start)) my.start <- min(data, na.rm=TRUE)
-    if(is.na(my.stop)) my.stop <- max(data, na.rm=TRUE)
-    my.gradient <- gradient_maker(start=my.start, stop=my.stop, cols=colors)
-    if(any(data > max(my.gradient), na.rm=T) | any(data < min(my.gradient), na.rm=T)) warning("data is not within gradient range")
-    data.colors <- rep(NA, length(data))
-    for(i in 1:length(data)){
-        if(!is.na(data[i])) data.colors[i] <- names(my.gradient)[which.min(abs(data[i]-my.gradient))]
-    }
-    data.colors
-}
-
-entropy <- function(x, base = exp(1)) {
-  p <- prop.table(table(x))
-  sum(p * log(1/p, base = base))
-}
-
 draw_circle <- function(r, x = 0, y = 0, ...) {
   x <- seq(-r, r, by = 0.001)
   polygon(c(x, rev(x)), c(sqrt(r^2 - x^2), rev(-sqrt(r^2 - x^2))), ...)
@@ -93,22 +64,6 @@ prep_latex_variables <- function(named_list) {
     out[i] <- paste0("\\newcommand{\\", names(named_list)[i], "}{", named_list[[i]], "}")
   }
   return(out)
-}
-
-
-texttab <- function(input.matrix, alignment = NA,
-  hlines = NA, caption = "", scale = NA) {
-  output <- character(nrow(input.matrix))
-  for (i in 1:nrow(input.matrix)) {
-    add.amps <- paste(input.matrix[i, ], collapse = " & ")
-    output[i] <- paste(add.amps, "\\\\", sep = " ")
-  }
-  if (all(!is.na(hlines))) {
-    for (i in 1:length(hlines)) {
-      output <- append(output, "\\hline", hlines[i] + (i - 1))
-    }
-  }
-  return(output)
 }
 
 dir_init <- function(path, verbose = FALSE) {
@@ -128,39 +83,45 @@ dir_init <- function(path, verbose = FALSE) {
     invisible(path)
 }
 
-col_alpha <- function(acol, alpha = 0.2) {
-  acol <- col2rgb(acol)
-  acol.red <- acol["red", ] / 255
-  acol.green <- acol["green", ] / 255
-  acol.blue <- acol["blue", ] / 255
-  acol <- mapply(
-    function(red, green, blue, alphas) {
-      rgb(red, green, blue, alphas)
-    },
-    acol.red, acol.green, acol.blue, alpha
-  )
-  return(as.character(acol))
-}
 
+HPDI <- function(samples, prob = 0.89) {
+    # from rethinking package
+    samples <- sort(as.numeric(samples))
 
-write_latex_table <- function(df, path, hlines=NA) {
-  output <- character(nrow(df))
-  for (i in 1:nrow(df)) {
-    add.amps <- paste(df[i,], collapse = " & ")
-    output[i] <- paste(add.amps, "\\\\", sep = " ")
-  }
-  if (all(!is.na(hlines))) {
-    for (i in seq_along(hlines)) output <- append(output, "\\hline", hlines[i] + (i - 1))
-  }
-  writeLines(output, path)
-}
+    calc_hpdi <- function(p) {
+    # coda replacement
 
-write_pandoc_table <- function(df, path, style = "rmarkdown", trim_ws = TRUE, ...) {
-  df |>
-  pandoc.table(style = style, ...) |>
-  capture.output() -> out
-  if (trim_ws) {
-    out <- out[which(out != "")]
-  }
-  writeLines(out, path)
+        n <- length(samples)
+        width <- floor(p * n)
+
+        if (width < 1 || width >= n) {
+            stop("prob must define an interval containing between 1 and n - 1 samples")
+        }
+
+        lower <- samples[seq_len(n - width)]
+        upper <- samples[seq_len(n - width) + width]
+
+        i <- which.min(upper - lower)
+
+        c(lower[i], upper[i])
+    }
+
+    x <- sapply(prob, calc_hpdi)
+
+    n <- length(prob)
+    result <- numeric(2 * n)
+
+    for (i in seq_len(n)) {
+
+        low_idx <- n + 1 - i
+        up_idx <- n + i
+
+        result[low_idx] <- x[1, i]
+        result[up_idx] <- x[2, i]
+
+        names(result)[low_idx] <- paste0("|", prob[i])
+        names(result)[up_idx] <- paste0(prob[i], "|")
+    }
+
+    return(result)
 }

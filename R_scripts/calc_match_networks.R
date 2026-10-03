@@ -1,6 +1,4 @@
 
-source("project_support.R")
-
 games <- read.csv("data/games.csv")
 players <- read.csv("data/players.csv")
 

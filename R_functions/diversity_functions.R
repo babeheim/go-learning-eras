@@ -18,8 +18,6 @@ calc_js_divergence <- function(x, y) {
 
 extract_game_nodes <- function(sgf_moves, n_moves) {
   moves <- matrix(NA, nrow = length(sgf_moves), ncol = n_moves)
-  sgf_coords <- paste0(rep(letters[1:19], each = 19), rep(letters[1:19], by = 19))
-  unicode_symbols <- intToUtf8(0x1F300 + 0:360, multiple = TRUE)  # Starting from U+1F300 (Miscellaneous Symbols)
   for (i in seq_along(sgf_moves)) {
     game_moves <- strsplit(sgf_moves[i], ";")[[1]][1:n_moves]
     blacks <- seq(1, n_moves, 2)
@@ -84,7 +82,7 @@ move_richness <- function(moves) {
   return(out)
 }
 
-move_entropy <- function(moves, base) {
+move_entropy <- function(moves, base = exp(1)) {
   out <- apply(moves, 2, entropy, base = base)
   out <- as.numeric(out)
   return(out)

@@ -1,7 +1,4 @@
 
-
-source("project_support.R")
-
 move12s <- read.csv("data/move12s.csv")
 games <- read.csv("data/games.csv")
 
@@ -389,7 +386,7 @@ for (i in 1:nrow(dat)) {
     ylim = -c((board_size + 1), 0), axes = FALSE,
     xaxt="n", yaxt="n", xlab="", ylab="", main = dat$name[i])
   polygon(c(0, 0, (board_size + 1), (board_size + 1)),
-    -c(0, (board_size + 1), (board_size + 1), 0), col = col_alpha(dat$board_col[i]))
+    -c(0, (board_size + 1), (board_size + 1), 0), col = adjustcolor(dat$board_col[i]))
   for (j in 1:board_size) {
     lines(c(j, j), -c(1, board_size), col = line.color)
     lines(c(1, board_size), -c(j, j), col = line.color)
@@ -489,7 +486,7 @@ for (i in 1:nrow(dat)) {
     ylim = -c((board_size + 1), 0), axes = FALSE,
     xaxt="n", yaxt="n", xlab="", ylab="", main = dat$name[i])
   polygon(c(0, 0, (board_size + 1), (board_size + 1)),
-    -c(0, (board_size + 1), (board_size + 1), 0), col = col_alpha(dat$board_col[i]))
+    -c(0, (board_size + 1), (board_size + 1), 0), col = adjustcolor(dat$board_col[i]))
   for (j in 1:board_size) {
     lines(c(j, j), -c(1, board_size), col = line.color)
     lines(c(1, board_size), -c(j, j), col = line.color)

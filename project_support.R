@@ -1,18 +1,14 @@
 
-library(rethinking)  # github.com/rmcelreath/rethinking
 library(kaya)        # github.com/babeheim/kaya
+library(cmdstanr)
+library(posterior)
 library(tictoc)
-library(digest)
-library(XML)
-library(tikzDevice)
 library(yaml)
 library(igraph)
 library(viridis)
 library(dplyr)
 library(glue)
 library(pander)
-library(loo)
-library(testthat)
 library(stringdist)
 library(philentropy) # for JSD, Jensen-Shannon Divergence
 

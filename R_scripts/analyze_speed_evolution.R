@@ -1,6 +1,4 @@
 
-source("project_support.R")
-
 d <- read.csv("data/games.csv")
 
 periods <- data.frame(
@@ -197,7 +195,7 @@ png("figures/move12_evolution_pace.png", res = 300, units = "in", height = 4.5, 
 par(mar = c(4, 4, 0, 0))
 
 plot(periods$name, sigma_mu, type = "n", ylim = c(0, 2.1), ylab = "speed of trait evolution (s.d.'s)", xlab = "year")
-polygon(c(periods$name, rev(periods$name)), c(sigma_lb, rev(sigma_ub)), col = col_alpha("dodgerblue", 0.3), border = NA)
+polygon(c(periods$name, rev(periods$name)), c(sigma_lb, rev(sigma_ub)), col = adjustcolor("dodgerblue", 0.3), border = NA)
 points(periods$name, sigma_mu, type = "l")
 
 points(periods$name, periods$delta_p_su_sd, pch = 20)

@@ -1,6 +1,4 @@
 
-source("project_support.R")
-
 games <- read.csv("data/games.csv")
 eras <- read.csv("data/eras.csv")
 move12s <- read.csv("data/move12s.csv")
@@ -294,10 +292,10 @@ for (k in 1:nrow(eras)) {
   
   par(new = TRUE)
 
-  plot(net, edge.arrow.size=0, vertex.color = col.alpha("gray", 0.01),
-    vertex.frame.color = col.alpha("gray", 0.01), vertex.size = 0.0001,
+  plot(net, edge.arrow.size=0, vertex.color = adjustcolor("gray", 0.01),
+    vertex.frame.color = adjustcolor("gray", 0.01), vertex.size = 0.0001,
     edge.width = eras$line_weight[k] * (links$game_count)^(1/3),
-    edge.color = col_alpha(links$edge_col, 1.0), layout = l, vertex.label = NA,
+    edge.color = adjustcolor(links$edge_col, 1.0), layout = l, vertex.label = NA,
     ylim = c(-1, 1), xlim = c(-1, 1), main = eras$label[k], cex.main = 1.5)
     line_col <- gray(0.1, 0.1)
 
