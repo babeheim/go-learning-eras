@@ -1,4 +1,4 @@
-name: R smoke tests
+name: Project integrity tests
 
 on:
   push:
