@@ -4,7 +4,7 @@ find_project_root <- function(start = getwd()) {
   repeat {
     if (
       file.exists(file.path(path, "project_support.R")) &&
-      dir.exists(file.path(path, "R_functions"))
+      dir.exists(file.path(path, "R"))
     ) {
       return(path)
     }

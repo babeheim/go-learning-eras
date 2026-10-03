@@ -737,6 +737,10 @@ tryCatch(
       "figures"
     )
 
+    dir_init(
+      "cached"
+    )
+
     cat(
       "Figures directory initialized.\n"
     )
@@ -756,7 +760,7 @@ tryCatch(
     # ------------------------------------------------------------------------
 
     timing_results[["plot_openings"]] <- run_script(
-      file = "R_scripts/plot_openings.R",
+      file = "R/plot_openings.R",
       label = "plot openings"
     )
 
@@ -766,7 +770,7 @@ tryCatch(
     # ------------------------------------------------------------------------
 
     timing_results[["plot_opening_trees"]] <- run_script(
-      file = "R_scripts/plot_opening_trees.R",
+      file = "R/plot_opening_trees.R",
       label = "plot opening trees"
     )
 
@@ -776,7 +780,7 @@ tryCatch(
     # ------------------------------------------------------------------------
 
     timing_results[["plot_database_coverage"]] <- run_script(
-      file = "R_scripts/plot_database_coverage.R",
+      file = "R/plot_database_coverage.R",
       label = "plot database coverage"
     )
 
@@ -786,7 +790,7 @@ tryCatch(
     # ------------------------------------------------------------------------
 
     timing_results[["calc_game_distances"]] <- run_script(
-      file = "R_scripts/calc_game_distances.R",
+      file = "R/calc_game_distances.R",
       label = "calculate game distances"
     )
 
@@ -796,7 +800,7 @@ tryCatch(
     # ------------------------------------------------------------------------
 
     timing_results[["calc_match_networks"]] <- run_script(
-      file = "R_scripts/calc_match_networks.R",
+      file = "R/calc_match_networks.R",
       label = "calculate match networks"
     )
 
@@ -806,7 +810,7 @@ tryCatch(
     # ------------------------------------------------------------------------
 
     timing_results[["analyze_opening_diversity"]] <- run_script(
-      file = "R_scripts/analyze_opening_diversity.R",
+      file = "R/analyze_opening_diversity.R",
       label = "analyze opening diversity"
     )
 
@@ -816,7 +820,7 @@ tryCatch(
     # ------------------------------------------------------------------------
 
     timing_results[["analyze_speed_evolution"]] <- run_script(
-      file = "R_scripts/analyze_speed_evolution.R",
+      file = "R/analyze_speed_evolution.R",
       label = "analyze speed evolution"
     )
 

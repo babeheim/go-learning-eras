@@ -21,7 +21,7 @@ init_project <- FALSE     # wipes figures/, rds/, data/
 set.seed(project_seed)
 options(warnPartialMatchDollar=TRUE)
 
-files <- list.files("R_functions", full.names = TRUE)
+files <- list.files("R/functions", full.names = TRUE)
 for (i in seq_along(files)) source(files[i])
 
 n_chains <- 4

@@ -10,7 +10,7 @@ calcs$nGamesMDSEra <- format(n_games_era, big.mark = ",", trim = TRUE)
 calcs$nGamesMDSTotal <- format(n_games_era * nrow(eras), big.mark = ",", trim = TRUE)
 calcs$nMovesMDSDepth <- n_moves
 
-if (!file.exists("data/distance_mds.RDS")) {
+if (!file.exists("cached/distance_mds.RDS")) {
 
   set.seed(project_seed)
   hits <- integer()
@@ -32,7 +32,7 @@ if (!file.exists("data/distance_mds.RDS")) {
   mds_result <- cmdscale(distance_matrix, k=2)
   mds <- data.frame(x = as.numeric(scale(mds_result[,1])), y = as.numeric(scale(mds_result[,2])))
   mds$hash_id <- games$hash_id
-  saveRDS(mds, file = "data/distance_mds.RDS")
+  saveRDS(mds, file = "cached/distance_mds.RDS")
 
 }
 

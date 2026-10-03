@@ -80,7 +80,7 @@ for (i in 1:nrow(periods)) {
     ) %>%
     count(from, to, period, name = "n_games")
   stopifnot(sum(edgelist$n_games) == length(tar))
-  filename <- paste0("data/edgelist_", periods$name[i], ".csv")
+  filename <- paste0("cached/edgelist_", periods$name[i], ".csv")
   write.csv(edgelist, filename, row.names = FALSE)
   cat(filename, "\n")
 
@@ -102,7 +102,7 @@ focal_period <- 1625
 node_size <- 5
 edge_width <- 1
 
-edgelists <- list.files("data", pattern = "edgelist", full.names = TRUE)
+edgelists <- list.files("cached", pattern = "edgelist", full.names = TRUE)
 i <- which(periods$name == focal_period)
 edges <- read.csv(edgelists[i])
 
@@ -152,7 +152,7 @@ focal_period <- 1935
 node_size <- 5
 edge_width <- 1
 
-edgelists <- list.files("data", pattern = "edgelist", full.names = TRUE)
+edgelists <- list.files("cached", pattern = "edgelist", full.names = TRUE)
 i <- which(periods$name == focal_period)
 edges <- read.csv(edgelists[i])
 
@@ -202,7 +202,7 @@ focal_period <- 1975
 node_size <- 5
 edge_width <- 1
 
-edgelists <- list.files("data", pattern = "edgelist", full.names = TRUE)
+edgelists <- list.files("cached", pattern = "edgelist", full.names = TRUE)
 i <- which(periods$name == focal_period)
 edges <- read.csv(edgelists[i])
 
@@ -252,7 +252,7 @@ focal_period <- 2022
 node_size <- 3
 edge_width <- 1
 
-edgelists <- list.files("data", pattern = "edgelist", full.names = TRUE)
+edgelists <- list.files("cached", pattern = "edgelist", full.names = TRUE)
 i <- which(periods$name == focal_period)
 edges <- read.csv(edgelists[i])
 
@@ -309,7 +309,7 @@ dir_init("./figures/match_network")
 node_size <- 2
 edge_width <- 1
 
-edgelists <- list.files("data", pattern = "edgelist", full.names = TRUE)
+edgelists <- list.files("cached", pattern = "edgelist", full.names = TRUE)
 force_plots <- FALSE
 
 periods$n_players <- NA
@@ -407,8 +407,6 @@ for (i in 1:length(edgelists)) {
     )
     dev.off()
   }
-
-  cat(edgelists[i], "\n")
 
 }
 

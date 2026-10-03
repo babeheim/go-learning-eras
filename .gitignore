@@ -3,4 +3,4 @@ figures/
 logs/
 *.rds
 *.RDS
-data/edgelist*
+cached/

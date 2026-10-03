@@ -22,8 +22,8 @@ test_that("required project entry points are present", {
 
 test_that("required source directories are present", {
   required <- c(
-    "R_functions",
-    "R_scripts",
+    "R",
+    "R/functions",
     "data"
   )
 

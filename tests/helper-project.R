@@ -10,7 +10,7 @@ find_project_root <- function(start = getwd()) {
   repeat {
     if (
       file.exists(file.path(path, "project_support.R")) &&
-      dir.exists(file.path(path, "R_functions"))
+      dir.exists(file.path(path, "R"))
     ) {
       return(path)
     }
@@ -34,16 +34,16 @@ suppressPackageStartupMessages(
 )
 
 source(
-  file.path(project_root, "R_functions", "diversity_functions.R"),
+  file.path(project_root, "R/functions", "diversity_functions.R"),
   local = FALSE
 )
 
 source(
-  file.path(project_root, "R_functions", "misc_functions.R"),
+  file.path(project_root, "R/functions", "misc_functions.R"),
   local = FALSE
 )
 
 source(
-  file.path(project_root, "R_functions", "kaya_functions.R"),
+  file.path(project_root, "R/functions", "kaya_functions.R"),
   local = FALSE
 )
