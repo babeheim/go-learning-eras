@@ -106,3 +106,45 @@ Beheim, B. (2025). Opening strategies in the Game of Go from feudalism to superh
 All materials in this repository are provided under the Creative Commons BY-NC-SA 4.0 license. See [`LICENSE.md`](LICENSE.md) for details.
 
 If any included or derived source data are subject to separate upstream licensing terms, those terms take precedence for the affected data.
+
+
+## System requirements
+
+This project uses `renv` to reproduce the R package environment. Some packages contain compiled C, C++, or Fortran code and therefore also require a working system compiler toolchain. These system-level dependencies are not managed by `renv`.
+
+### macOS
+
+Install the Apple Command Line Tools:
+
+```bash
+xcode-select --install
+```
+
+For Apple Silicon Macs using R 4.6.x, also install the matching GNU Fortran compiler from the official R for macOS tools page:
+
+https://mac.r-project.org/tools/
+
+For R 4.6.x, the relevant installer is:
+
+```text
+gfortran-14.2-universal.pkg
+```
+
+A working Fortran compiler may be required even when the package that fails to install is primarily written in C or C++. Some R packages link against compiled numerical libraries or have dependency chains that ultimately require Fortran support.
+
+After installation, verify the compiler configuration from R:
+
+```r
+system("R CMD config CC")
+system("R CMD config CXX")
+system("R CMD config FC")
+system("R CMD config F77")
+```
+
+Then restore the project environment:
+
+```r
+renv::restore()
+```
+
+`renv.lock` records R package versions and sources, but does not install external system tools such as `clang`, `make`, or `gfortran`.
