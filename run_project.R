@@ -73,38 +73,82 @@ latest_log <- file.path(
 # Load environment-restore helper
 # ============================================================================
 
-restore_helper <- file.path(
-  project_root,
-  "R",
-  "functions",
-  "restore_environment.R"
-)
+restore_environment <- function(project = ".") {
 
-if (!file.exists(
-  restore_helper
-)) {
-
-  stop(
-    "Environment restore helper was not found: ",
-    restore_helper
+  project <- normalizePath(
+    project,
+    winslash = "/",
+    mustWork = TRUE
   )
-}
 
-source(
-  restore_helper,
-  local = FALSE
-)
-
-if (!exists(
-  "restore_environment",
-  mode = "function",
-  inherits = TRUE
-)) {
-
-  stop(
-    "R/functions/restore_environment.R did not define ",
-    "restore_environment()."
+  lockfile <- file.path(
+    project,
+    "renv.lock"
   )
+
+  activate_file <- file.path(
+    project,
+    "renv",
+    "activate.R"
+  )
+
+  if (!file.exists(lockfile)) {
+    stop(
+      "renv.lock was not found: ",
+      lockfile
+    )
+  }
+
+  if (!file.exists(activate_file)) {
+    stop(
+      "renv activation script was not found: ",
+      activate_file
+    )
+  }
+
+  old_wd <- getwd()
+
+  on.exit(
+    setwd(old_wd),
+    add = TRUE
+  )
+
+  setwd(project)
+
+  # Bootstrap and activate the project's own renv environment.
+  #
+  # renv/activate.R can bootstrap renv itself on a fresh machine,
+  # so renv does not need to be installed globally beforehand.
+  source(
+    activate_file,
+    local = .GlobalEnv
+  )
+
+  if (!requireNamespace(
+    "renv",
+    quietly = TRUE
+  )) {
+    stop(
+      "renv could not be bootstrapped from renv/activate.R."
+    )
+  }
+
+  # Restore exactly the package versions recorded in renv.lock.
+  renv::restore(
+    project = project,
+    lockfile = lockfile,
+    prompt = FALSE,
+    retry = FALSE
+  )
+
+  # Explicitly ensure that this running R process is using the
+  # restored project library.
+  renv::load(
+    project = project,
+    quiet = TRUE
+  )
+
+  invisible(TRUE)
 }
 
 
@@ -783,84 +827,157 @@ tryCatch(
       "Cached directory initialized.\n"
     )
 
-    # ========================================================================
+    # ============================================================================
     # Analysis
-    # ========================================================================
+    # ============================================================================
 
-    section_header(
-      "ANALYSIS"
+    section_header("ANALYSIS")
+
+
+    # ------------------------------------------------------------------------
+    # Discover analysis scripts
+    # ------------------------------------------------------------------------
+
+    analysis_dir <- file.path(
+      project_root,
+      "R"
     )
 
-
-    # ------------------------------------------------------------------------
-    # Plot openings
-    # ------------------------------------------------------------------------
-
-    timing_results[["plot_openings"]] <- run_script(
-      file = "R/plot_openings.R",
-      label = "plot openings"
+    analysis_scripts <- list.files(
+      path = analysis_dir,
+      pattern = "^[0-9]+_.*\\.R$",
+      full.names = TRUE
     )
 
+    if (length(analysis_scripts) == 0L) {
+      stop(
+        "No numbered analysis scripts were found in ",
+        analysis_dir,
+        "."
+      )
+    }
+
 
     # ------------------------------------------------------------------------
-    # Plot opening trees
+    # Order analysis scripts
     # ------------------------------------------------------------------------
 
-    timing_results[["plot_opening_trees"]] <- run_script(
-      file = "R/plot_opening_trees.R",
-      label = "plot opening trees"
+    analysis_filenames <- basename(
+      analysis_scripts
     )
 
-
-    # ------------------------------------------------------------------------
-    # Plot database coverage
-    # ------------------------------------------------------------------------
-
-    timing_results[["plot_database_coverage"]] <- run_script(
-      file = "R/plot_database_coverage.R",
-      label = "plot database coverage"
+    analysis_numbers <- as.integer(
+      sub(
+        "^([0-9]+)_.*$",
+        "\\1",
+        analysis_filenames
+      )
     )
 
-
-    # ------------------------------------------------------------------------
-    # Calculate game distances
-    # ------------------------------------------------------------------------
-
-    timing_results[["calc_game_distances"]] <- run_script(
-      file = "R/calc_game_distances.R",
-      label = "calculate game distances"
+    analysis_order <- order(
+      analysis_numbers,
+      analysis_filenames
     )
 
+    analysis_scripts <- analysis_scripts[
+      analysis_order
+    ]
+
+    analysis_filenames <- analysis_filenames[
+      analysis_order
+    ]
+
+    analysis_numbers <- analysis_numbers[
+      analysis_order
+    ]
+
 
     # ------------------------------------------------------------------------
-    # Calculate match networks
+    # Verify analysis numbering
     # ------------------------------------------------------------------------
 
-    timing_results[["calc_match_networks"]] <- run_script(
-      file = "R/calc_match_networks.R",
-      label = "calculate match networks"
+    if (anyDuplicated(
+      analysis_numbers
+    )) {
+
+      duplicated_numbers <- unique(
+        analysis_numbers[
+          duplicated(
+            analysis_numbers
+          ) |
+            duplicated(
+              analysis_numbers,
+              fromLast = TRUE
+            )
+        ]
+      )
+
+      stop(
+        "Duplicate analysis-script numbers detected: ",
+        paste(
+          duplicated_numbers,
+          collapse = ", "
+        )
+      )
+    }
+
+
+    # ------------------------------------------------------------------------
+    # Report workflow
+    # ------------------------------------------------------------------------
+
+    cat(
+      "Analysis scripts found:\n\n"
     )
 
+    for (i in seq_along(
+      analysis_scripts
+    )) {
+
+      cat(
+        sprintf(
+          "  %02d. %s\n",
+          i,
+          analysis_filenames[i]
+        )
+      )
+    }
+
+    cat("\n")
+
 
     # ------------------------------------------------------------------------
-    # Analyze opening diversity
+    # Run analysis scripts
     # ------------------------------------------------------------------------
 
-    timing_results[["analyze_opening_diversity"]] <- run_script(
-      file = "R/analyze_opening_diversity.R",
-      label = "analyze opening diversity"
-    )
+    for (i in seq_along(
+      analysis_scripts
+    )) {
 
+      script_file <- analysis_scripts[i]
 
-    # ------------------------------------------------------------------------
-    # Analyze speed evolution
-    # ------------------------------------------------------------------------
+      script_name <- tools::file_path_sans_ext(
+        analysis_filenames[i]
+      )
 
-    timing_results[["analyze_speed_evolution"]] <- run_script(
-      file = "R/analyze_speed_evolution.R",
-      label = "analyze speed evolution"
-    )
+      script_label <- sub(
+        "^[0-9]+_",
+        "",
+        script_name
+      )
 
+      script_label <- gsub(
+        "_",
+        " ",
+        script_label,
+        fixed = TRUE
+      )
+
+      timing_results[[script_name]] <- run_script(
+        file = script_file,
+        label = script_label
+      )
+    }
 
     # ========================================================================
     # Timing summary
