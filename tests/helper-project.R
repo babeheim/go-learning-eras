@@ -47,3 +47,13 @@ source(
   file.path(project_root, "R/functions", "kaya_functions.R"),
   local = FALSE
 )
+
+source(
+  file.path(project_root, "R/functions", "HPDI.R"),
+  local = FALSE
+)
+
+source(
+  file.path(project_root, "R/functions", "dir_init.R"),
+  local = FALSE
+)
